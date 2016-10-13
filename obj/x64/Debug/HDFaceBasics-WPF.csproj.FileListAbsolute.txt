@@ -1,0 +1,70 @@
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\HDFaceBasics-WPF.exe.config
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\HDFaceBasics-WPF.exe
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\HDFaceBasics-WPF.pdb
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Face.dll
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Face.xml
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\MainWindow.g.cs
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\App.g.cs
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF_MarkupCompile.cache
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF_MarkupCompile.lref
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\MainWindow.baml
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.g.resources
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Properties.Resources.resources
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.csproj.GenerateResource.Cache
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.exe
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.pdb
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\Interop.MediaPlayer.dll
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.csproj.ResolveComReference.cache
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Tools.dll
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\NAudio.dll
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\System.Windows.Controls.DataVisualization.Toolkit.dll
+C:\Users\karolchang\Desktop\kinect sample\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Tools.xml
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\HDFaceBasics-WPF.exe.config
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\Interop.MediaPlayer.dll
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.csproj.ResolveComReference.cache
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.exe
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.pdb
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\HDFaceBasics-WPF.exe
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\HDFaceBasics-WPF.pdb
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.dll
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Face.dll
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Tools.dll
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\NAudio.dll
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\System.Windows.Controls.DataVisualization.Toolkit.dll
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.xml
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Face.xml
+E:\temp\HDFaceBasics-WPF\bin\x64\Debug\Microsoft.Kinect.Tools.xml
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.csprojResolveAssemblyReference.cache
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\MainWindow.g.cs
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\App.g.cs
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF_MarkupCompile.cache
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF_MarkupCompile.lref
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\MainWindow.baml
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.g.resources
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Properties.Resources.resources
+E:\temp\HDFaceBasics-WPF\obj\x64\Debug\HDFaceBasics-WPF.csproj.GenerateResource.Cache
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\HDFaceBasics-WPF.exe.config
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Interop.MediaPlayer.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.csproj.ResolveComReference.cache
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.exe
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.pdb
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\HDFaceBasics-WPF.exe
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\HDFaceBasics-WPF.pdb
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Face.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Tools.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\NAudio.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\System.Windows.Controls.DataVisualization.Toolkit.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.xml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Face.xml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Tools.xml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.csprojResolveAssemblyReference.cache
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\MainWindow.g.cs
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\App.g.cs
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF_MarkupCompile.cache
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF_MarkupCompile.lref
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\MainWindow.baml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.g.resources
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Properties.Resources.resources
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.csproj.GenerateResource.Cache
