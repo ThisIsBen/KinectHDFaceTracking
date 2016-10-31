@@ -53,7 +53,6 @@ E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\HDFaceBasics-WPF.exe
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\HDFaceBasics-WPF.pdb
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Face.dll
-E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Tools.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\NAudio.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\System.Windows.Controls.DataVisualization.Toolkit.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.xml
@@ -68,3 +67,4 @@ E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\MainWindow.baml
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.g.resources
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Properties.Resources.resources
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.csproj.GenerateResource.Cache
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Tools.dll

@@ -30,25 +30,31 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
     using System.Text;
     using NAudio.Wave;
     
+
     ///888888888888888888888
-   
-   
+
+
     using System.Windows.Data;
-   
+
     using System.Windows.Input;
     using System.Windows.Markup;
-   
+
     using System.Windows.Navigation;
+    using System.Collections;
 
     /// 8888888888888888888
-    
+
     /// <summary>
     /// Main Window
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged, IDisposable
     {
         /// <summary>
-         int frameNum = 0;
+        /// 
+        //to record all the smile intensity per second during the interview
+        ArrayList smilePerSec_arrayList = new ArrayList();
+
+
         System.Windows.Forms.Timer aTimer = new System.Windows.Forms.Timer();
 
 
@@ -209,6 +215,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //{
                 outfile2.WriteLine(smileave.Sum());
                 outfile2.Flush();
+            //add smile record per second
+            smilePerSec_arrayList.Add(smileave.Sum());
             //}
         }
 
@@ -280,7 +288,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //3D人物
-            web1.Navigate("file:///C:/xampp/htdocs/3d.htm");
+            web1.Navigate("http://localhost/3d.htm");
             for (int i = 0; i < this.bodyCount; i++)
             {
                 if (this.faceFrameReaders[i] != null)
@@ -897,7 +905,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 }
             }
             //
-           /* if (number > -1 && number < 5 && (number * 2 + 1) <= qa.Length)
+            /*if (number > -1 && number < 5 && (number * 2 + 1) <= qa.Length)
              {
                  WaveFileReader reader = new WaveFileReader("test" + number + ".wav");
                  TimeSpan duration = reader.TotalTime;
@@ -1166,17 +1174,20 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-         /* 原本為錄影程式  但是現在沒用到所以先註解掉  因為一但開啟可能會停不掉
-          * Process videocmd = new Process();
-            videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
-            videocmd.Start();*/
+            /* 原本為錄影程式  但是現在沒用到所以先註解掉  因為一但開啟可能會停不掉
+             * Process videocmd = new Process();
+               videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
+               videocmd.Start();*/
 
             //開啟錄音程式
+            /*
             Process cmd = new Process();
             cmd.StartInfo.FileName = "java.exe";
-            cmd.StartInfo.Arguments = "-jar D:/record/voicerecord_2/test1.jar";
+            cmd.StartInfo.Arguments = "-jar E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.jar";
             cmd.StartInfo.CreateNoWindow = true;
             cmd.Start();
+            */
+           
             buttonclick = 1;
         }
 
@@ -1298,7 +1309,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             Random qnumber = new Random();
             int ran = 0;
             //記錄所有qa，並在UpdateMesh()去讀取，然後再印在對話框
-            StreamWriter qa = new StreamWriter("allQA.txt");
+            //StreamWriter qa = new StreamWriter("allQA.txt");
+            StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speech_to_text.txt");
 
 
             /*  StreamReader ques = new StreamReader("/question/1.txt", System.Text.Encoding.Default);
@@ -1344,28 +1356,42 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     break;
                 }
                 // Thread.Sleep(1000); 
-                /* Process cmd = new Process();
+                /*java recording program
+                 Process cmd = new Process();
                  cmd.StartInfo.FileName = "java.exe";
                  cmd.StartInfo.Arguments = "-jar D:/record/voicerecord_3/record.jar";
-                 cmd.Start();*/
+                 cmd.Start();
+                 */
+                
+
                 interview_state = i + "_1";
-                string strFolderPath = "wave" + i.ToString() + "/";
+                string strFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wave" + i.ToString() + "/";
                 if (Directory.Exists(strFolderPath))
                 {
                     DirectoryInfo DIFO = new DirectoryInfo(strFolderPath);
                     DIFO.Delete(true);
                 }
-                string wavFolderPath = "wave" + i.ToString() + "/";
+                string wavFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wavee" + i.ToString() + "/";
                 DirectoryInfo wavDIFO = new DirectoryInfo(wavFolderPath);
                 wavDIFO.Create();
-                /*
+                
                 Process cmd1 = new Process();
-                cmd1.StartInfo.FileName = "java.exe";
-                cmd1.StartInfo.Arguments = "-jar C:/Users/karolchang/Desktop/kinect sample/HDFaceBasics-WPF/bin/x64/Debug/record.jar " + i.ToString();
+                cmd1.StartInfo.FileName = "python";
+                cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py " ;
                 cmd1.Start();
-               
+                cmd1.WaitForExit();
+                //call asr
+                
+                
+                Process cmd2 = new Process();
+                cmd2.StartInfo.FileName = "python";
+                cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
+                cmd2.Start();
+
+                
+
                 // 執行檔路徑下的 MyDir 資料夾
-                string folderName = "D:/kinect/HDFaceBasics-WPF/bin/x64/Debug/wave" + i.ToString() + "/";
+                string folderName = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wave" + i.ToString() + "/";
 
                 // 取得資料夾內所有檔案
                 string text = "";
@@ -1394,11 +1420,13 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                         speakingrate = duration.TotalMilliseconds / text.Length;
                         filenum++;
                     }
-                }*/
+                }
                 
-                // string ckip = afterckip(text);
-                string text = "你;好;你好\n";
+                
+                //若錄音城市不成功就用下方此方式輸入你要說的回答句
+                //string text = "你;好;你好\n";
                 string ckip = text;
+                
                 line += "System:" + nextquestion.Split(';')[1].Replace("\n", "") + "\n" + "User:" + ckip.Replace("\n", "") + "\n";
                 answer += nextquestion.Split(';')[2].Replace("\n", "").Replace("\r", "") + "#" + nextquestion.Split(';')[1].Replace("\n", "").Replace("\r", "") + "#" + ckip.Replace("\n", "").Replace("\r", "") + "\n";
                 /* {
@@ -1471,7 +1499,13 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private string message3(string answer)
         {
             string returnData = "";
+            //run back end Q generation program on 學長's PC
+            /*
             UdpClient udpClient = new UdpClient("140.116.82.104", 8082);
+            */
+            //run back end Q generation program on AWS cloud server
+            UdpClient udpClient = new UdpClient("54.244.174.89", 8082);
+            //
             Byte[] sendBytes = Encoding.UTF8.GetBytes(answer);
             try
             {
