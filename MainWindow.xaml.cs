@@ -29,7 +29,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
     using System.Diagnostics;
     using System.Text;
     using NAudio.Wave;
-    
+
 
     ///888888888888888888888
 
@@ -42,6 +42,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
     using System.Windows.Navigation;
     using System.Collections;
 
+
+
+
+
     /// 8888888888888888888
 
     /// <summary>
@@ -51,13 +55,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
     {
         /// <summary>
         /// 
-        //to record all the smile intensity per second during the interview
-        ArrayList smilePerSec_arrayList = new ArrayList();
 
 
-        System.Windows.Forms.Timer aTimer = new System.Windows.Forms.Timer();
-
-
+        //set up a timer to get nonverbal data per second
+        private static System.Timers.Timer nonverbal_Timer;
+        //set up nonverbal record OBJ array to store nonverbal feature as long as 20 minutes with unit:sec
+        nonverbalRecord[] nonverbalRecordOBJ = new nonverbalRecord[1200];
+        //this indicate nonverbalRecord array's index
+        int nonverbal_index = 0;
 
         /// </summary>
 
@@ -104,8 +109,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private FaceFrameReader[] faceFrameReaders = null;
         private FaceFrameResult[] faceFrameResults = null;
 
-        DispatcherTimer timer = new DispatcherTimer();
-
+       
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -116,17 +120,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         ////////////////////////////////888888888888888/////////////////////
         public MainWindow()
         {
-            /* System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-              
-             timer.Interval = 1000;
-             timer.Tick += new EventHandler(timer_Tick);
-             timer.Start();*/
-            //
-            aTimer.Tick += new EventHandler(captureSmilePS);
+            
+           
 
-            aTimer.Interval = 1000;
-            aTimer.Start();
 
+            //clear up speech_to_text.txt
+            //System.IO.File.WriteAllText(@"speech_to_text.txt", string.Empty);
             //
             InitializeComponent();
 
@@ -140,7 +139,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
             ////8888888888888888888888888888888888888888
-           
+
             //this.sensor.ElevationAngle = 0;
 
 
@@ -209,14 +208,23 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
         }
-        public void captureSmilePS(object sender, EventArgs e)
+        private  void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+
         {
             //if (smileave.Sum() != 0)
             //{
-                outfile2.WriteLine(smileave.Sum());
-                outfile2.Flush();
-            //add smile record per second
-            smilePerSec_arrayList.Add(smileave.Sum());
+            outfile2.WriteLine(smileave.Sum());
+            outfile2.Flush();
+            //add nonverbal feature to nonverbalRecordOBJ array record per second
+            nonverbalRecordOBJ[nonverbal_index] = new nonverbalRecord();
+            nonverbalRecordOBJ[nonverbal_index].timeStamp = System.DateTime.Now.ToString("u");
+            nonverbalRecordOBJ[nonverbal_index].smileIntensity = smileave.Sum();
+            nonverbalRecordOBJ[nonverbal_index].nodIntensity = nodave.Sum();
+            nonverbalRecordOBJ[nonverbal_index].eyeContactIntensity = eyeave.Sum();
+
+            nonverbal_index++;
+
+            //Console.WriteLine("hi ben!");
             //}
         }
 
@@ -297,6 +305,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     this.faceFrameReaders[i].FrameArrived += this.Reader_FaceFrameArrived;
                 }
             }
+
+
         }
 
         int lookingaway = 0;
@@ -662,10 +672,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //按鈕圖片
             string chartPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/Images/";
             Image[] diaask = new Image[10];
-            BitmapImage eyechart = new BitmapImage(new Uri(chartPath+"eye.png"));
-            BitmapImage smilechart = new BitmapImage(new Uri(chartPath+"smile.png"));
+            BitmapImage eyechart = new BitmapImage(new Uri(chartPath + "eye.png"));
+            BitmapImage smilechart = new BitmapImage(new Uri(chartPath + "smile.png"));
             BitmapImage nodchart = new BitmapImage(new Uri(chartPath + "nod.png"));
-            BitmapImage volumechart = new BitmapImage(new Uri(chartPath+"volume.png"));
+            BitmapImage volumechart = new BitmapImage(new Uri(chartPath + "volume.png"));
             BitmapImage speakingratechart = new BitmapImage(new Uri(chartPath + "slow.png"));
             BitmapImage speakingratechart1 = new BitmapImage(new Uri(chartPath + "fast.png"));
 
@@ -736,8 +746,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //
             outfile1.WriteLine(AU1);
             outfile1.Flush();
-           // Console.WriteLine(AU1);
-           // Console.WriteLine(AU);
+            // Console.WriteLine(AU1);
+            // Console.WriteLine(AU);
             //
 
             mouthopen = mundOffen0;
@@ -923,13 +933,13 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                  }
                  //len.Text = speakingrate.ToString();
              }*/
-             //
+            //
             //smile長條圖
             System.Windows.Controls.ProgressBar smilebar = new System.Windows.Controls.ProgressBar();
             //display the Sum of the current smile value in array.
             smilebar.Value = smileave.Sum();
             ///
-            
+
             /*
             if(frameNum<30)
             {
@@ -964,10 +974,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //每五秒微笑佔的時間比例
             TextBlock smilearl = new TextBlock();
             //30if (smileave.Sum() < 45)
-           /* only when smileave.Sum()>35  can be counted as a true smile.
-                other than that are just mistook speaking for smileing.
-                So, set smileave.Sum()=35=>smile分數 0*/
-            if (smileave.Sum() < 15)
+            /* only when smileave.Sum()>35  can be counted as a true smile.
+                 other than that are just mistook speaking for smileing.
+                 So, set smileave.Sum()=35=>smile分數 0*/
+
+            //if smileave.sum < 3 , it means you smile rarely
+            if (smileave.Sum() < 3)
             {
                 smilebar.Foreground = RedBrush;
 
@@ -992,7 +1004,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             nodbar.Width = 300;
             nodbar.Orientation = System.Windows.Controls.Orientation.Horizontal;
             //眼神接觸長條圖
-            
+
             // we still need to trace user's eyeball to check whether he is making a true eyecontact
             System.Windows.Controls.ProgressBar eyebar = new System.Windows.Controls.ProgressBar();
             //display the Sum of the current eye value in array.
@@ -1161,6 +1173,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             {
                 // We might miss the chance to acquire the frame; it will be null if it's missed.
                 // Also ignore this frame if face tracking failed.
+
                 if (frame == null || !frame.IsFaceTracked)
                 {
                     canvas2.Children.Clear();
@@ -1187,7 +1200,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             cmd.StartInfo.CreateNoWindow = true;
             cmd.Start();
             */
-           
+
             buttonclick = 1;
         }
 
@@ -1294,8 +1307,23 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             // Camerathread.Start();
         }
 
+
+
+
+
         private void work()
         {
+            //capture smile value per second
+            // Create a timer with a two second interval.
+            nonverbal_Timer = new System.Timers.Timer(1000);
+
+            nonverbal_Timer.Elapsed += OnTimedEvent;
+            //nonverbal_Timer.Tick += new EventHandler(captureSmilePS);
+            //nonverbal_Timer.Interval = 1000;
+            //start record user's nonverbal feature
+            nonverbal_Timer.Enabled = true;
+
+
             /* Process videocmd = new Process();
              videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
              videocmd.Start();*/
@@ -1309,8 +1337,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             Random qnumber = new Random();
             int ran = 0;
             //記錄所有qa，並在UpdateMesh()去讀取，然後再印在對話框
-            //StreamWriter qa = new StreamWriter("allQA.txt");
-            StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speech_to_text.txt");
+            StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/allQA.txt");
+            //StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speech_to_text.txt");
 
 
             /*  StreamReader ques = new StreamReader("/question/1.txt", System.Text.Encoding.Default);
@@ -1324,6 +1352,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
               question[4,0] = "你常做什麼運動";*/
             question[5, 0] = "面試到此結束";
             nextquestion = message3("start");
+            //set up speech to text .txt 's reader
+            //System.IO.StreamReader speech2textReader = new System.IO.StreamReader("speech_to_text.txt");
+
+
             for (int i = 0; i < 12; i++)
             {
                 FileStream fs = new FileStream("name.txt", FileMode.Create);
@@ -1362,8 +1394,9 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                  cmd.StartInfo.Arguments = "-jar D:/record/voicerecord_3/record.jar";
                  cmd.Start();
                  */
-                
 
+                //11/4 the following code's function has been replace by python recording and speech to text program
+                /*
                 interview_state = i + "_1";
                 string strFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wave" + i.ToString() + "/";
                 if (Directory.Exists(strFolderPath))
@@ -1371,78 +1404,144 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     DirectoryInfo DIFO = new DirectoryInfo(strFolderPath);
                     DIFO.Delete(true);
                 }
-                string wavFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wavee" + i.ToString() + "/";
+                string wavFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/waveA" + i.ToString() + "/";
                 DirectoryInfo wavDIFO = new DirectoryInfo(wavFolderPath);
                 wavDIFO.Create();
-                
+                */
+
+                //call record program
                 Process cmd1 = new Process();
                 cmd1.StartInfo.FileName = "python";
-                cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py " ;
+                cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
                 cmd1.Start();
                 cmd1.WaitForExit();
                 //call asr
-                
-                
+
+                //speech to text and store text in speech_to_text.txt
                 Process cmd2 = new Process();
                 cmd2.StartInfo.FileName = "python";
                 cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
                 cmd2.Start();
 
-                
 
+                //11 / 4 the following code's function has been replace by python recording and speech to text program
                 // 執行檔路徑下的 MyDir 資料夾
-                string folderName = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wave" + i.ToString() + "/";
+                //string folderName = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wave" + i.ToString() + "/";
 
                 // 取得資料夾內所有檔案
-                string text = "";
-                if (Directory.Exists(folderName))
-                {
-                    int filenum = 0;
-                    foreach (string fname in Directory.GetFiles(folderName, "*.txt"))
-                    {
-                        string line1;
-                        // 一次讀取一行
-                        System.IO.StreamReader file = new System.IO.StreamReader(fname);
-                        line1 = file.ReadToEnd();
-                        if (filenum == (Directory.GetFiles(folderName, "*.txt").Length - 1) && !line1.Split('\n')[0].Equals(""))
-                        {
-                            text += line1.Split('\n')[0];
-                        }
-                        else if (!line1.Split('\n')[0].Equals(""))
-                        {
-                            text += line1.Split('\n')[0] + ",";
-                        }
 
-                        file.Close();
-                        WaveFileReader reader = new WaveFileReader(fname.Replace(".txt", ""));
-                        TimeSpan duration = reader.TotalTime;
-                        double length = duration.TotalMilliseconds;
-                        speakingrate = duration.TotalMilliseconds / text.Length;
-                        filenum++;
-                    }
+                string text = "";
+                /*
+               if (Directory.Exists(folderName))
+               {
+                   int filenum = 0;
+                   foreach (string fname in Directory.GetFiles(folderName, "*.txt"))
+                   {
+                       string line1;
+                       // 一次讀取一行
+                       System.IO.StreamReader file = new System.IO.StreamReader(fname);
+                       line1 = file.ReadToEnd();
+                       if (filenum == (Directory.GetFiles(folderName, "*.txt").Length - 1) && !line1.Split('\n')[0].Equals(""))
+                       {
+                           text += line1.Split('\n')[0];
+                       }
+                       else if (!line1.Split('\n')[0].Equals(""))
+                       {
+                           text += line1.Split('\n')[0] + ",";
+                       }
+
+                       file.Close();
+                       WaveFileReader reader = new WaveFileReader(fname.Replace(".txt", ""));
+                       TimeSpan duration = reader.TotalTime;
+                       double length = duration.TotalMilliseconds;
+                       speakingrate = duration.TotalMilliseconds / text.Length;
+                       filenum++;
+                   }
+               }
+                */
+
+
+                ///11/1
+                ////*
+                /*
+                try
+                {
+                */
+
+                // Your processing code here  
+                //text = File.ReadAllLines("speech_to_text.txt")[0];
+                //wait 1.8 second for python speechtotext program to write text to file.
+                //但speech_to_text.txt的內容都沒更新!!solved
+                //但speech_to_text.txt可事先不存在也可以囉!
+                System.Threading.Thread.Sleep(1800);
+
+
+                //text = speech2textReader.ReadLine();
+                ///////////////////////////////////////////////////////////////////
+                //StreamReader reader = new StreamReader("speech_to_text.txt");
+                text = File.ReadAllLines("speech_to_text.txt")[0];
+
+                /*
                 }
-                
-                
+                */
+                /*
+                catch (IndexOutOfRangeException e)
+                {
+
+
+                        cmd1.StartInfo.FileName = "python";
+                        cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
+                        cmd1.Start();
+                        cmd1.WaitForExit();
+
+                        cmd2.StartInfo.FileName = "python";
+                        cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
+                        cmd2.Start();
+
+                        text = File.ReadAllLines("speech_to_text.txt")[0];
+                        //StreamReader reader = new StreamReader("speech_to_text.txt");
+                        //text = reader.ReadLine();
+
+
+                }
+                */
+
+
+                Console.Read();
+
+
                 //若錄音城市不成功就用下方此方式輸入你要說的回答句
                 //string text = "你;好;你好\n";
+                //text = "你;好;你好\n";
                 string ckip = text;
-                
+
                 line += "System:" + nextquestion.Split(';')[1].Replace("\n", "") + "\n" + "User:" + ckip.Replace("\n", "") + "\n";
                 answer += nextquestion.Split(';')[2].Replace("\n", "").Replace("\r", "") + "#" + nextquestion.Split(';')[1].Replace("\n", "").Replace("\r", "") + "#" + ckip.Replace("\n", "").Replace("\r", "") + "\n";
-                /* {
-                     line += "System:" + question[i, ran] + "\n" + "User:" + ckip + "\n";
-                 }*/
+
+
+                //print user answer
+                //Console.WriteLine(ckip);
                 nextquestion = message3(ckip);
-                //  else
-                /*   {
-                       line += "System:" + question[i, ran] + "\n" + "User:null" + "\n";
-                   }*/
+
                 number = i;
 
 
             }
             qa.Write(answer);
             qa.Close();
+
+            //stop nonverbal timer because the interview has come to an end
+            // stop the timer
+            nonverbal_Timer.Enabled = false;
+
+
+
+            //send nonverbal feature to back end 
+            /**
+             * 
+             * 
+             * 
+             * */
         }
 
         private void message()
@@ -1500,11 +1599,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         {
             string returnData = "";
             //run back end Q generation program on 學長's PC
-            /*
             UdpClient udpClient = new UdpClient("140.116.82.104", 8082);
-            */
+
             //run back end Q generation program on AWS cloud server
-            UdpClient udpClient = new UdpClient("54.244.174.89", 8082);
+
+            //UdpClient udpClient = new UdpClient("54.244.174.89", 8082);
+
             //
             Byte[] sendBytes = Encoding.UTF8.GetBytes(answer);
             try
@@ -1517,7 +1617,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             }
             Thread.Sleep(500);
             IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            
+
             try
             {
 
@@ -1540,7 +1640,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             Console.WriteLine(returnData);
             return returnData;
         }
-       
+
         static string seg(String answer)
         {
             string[] strDic = new StreamReader("GigaWord_Dic.txt", Encoding.Default).ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1592,8 +1692,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         {
             // UserControl2 sw = new UserControl2();
             // sw._Value2 = "I'm number " + SubWindowsNum.ToString() + " SubWindow!";
-         /*   Form1 a = new Form1();
-            a.Show();*/
+            Form1 a = new Form1();
+            a.Show();
             //return;
         }
         /*
