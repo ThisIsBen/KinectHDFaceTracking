@@ -41,6 +41,36 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
     using System.Windows.Navigation;
     using System.Collections;
+    
+    
+    
+    //OBJ->JSON converter
+    using System.Runtime.Serialization.Json;
+   
+    
+
+
+
+    public class JSonHelper
+    {
+
+        public string ConvertObjectToJSon<T>(T obj)
+        {
+
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
+
+            MemoryStream ms = new MemoryStream();
+
+            ser.WriteObject(ms, obj);
+
+            string jsonString = Encoding.UTF8.GetString(ms.ToArray());
+
+            ms.Close();
+
+            return jsonString;
+
+        }
+    }
 
 
 
@@ -60,7 +90,9 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         //set up a timer to get nonverbal data per second
         private static System.Timers.Timer nonverbal_Timer;
         //set up nonverbal record OBJ array to store nonverbal feature as long as 20 minutes with unit:sec
-        nonverbalRecord[] nonverbalRecordOBJ = new nonverbalRecord[1200];
+        const int nonverbalAryNum=600;//for 10 mins interview
+        nonverbalRecord[] nonverbalRecordOBJ = new nonverbalRecord[nonverbalAryNum];
+       
         //this indicate nonverbalRecord array's index
         int nonverbal_index = 0;
 
@@ -120,8 +152,32 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         ////////////////////////////////888888888888888/////////////////////
         public MainWindow()
         {
+
+            //init nonverbal recorder array
+            for (int i = 0; i < nonverbalAryNum; i++)
+            {
+                nonverbalRecordOBJ[i] = new nonverbalRecord();
+                
+                nonverbalRecordOBJ[i].timeStamp = "-";
+                nonverbalRecordOBJ[i].smileIntensity = -1;
+                nonverbalRecordOBJ[i].nodIntensity = -1;
+                nonverbalRecordOBJ[i].eyeContactIntensity = -1;
+                //indicate the beginning of the interview
+                nonverbalRecordOBJ[i].begin_end = "-";
+                
+            }
+            //////////////////////////////////
             
-           
+
+
+
+
+
+
+
+
+
+            ////////////////////////////////////////
 
 
             //clear up speech_to_text.txt
@@ -216,12 +272,17 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             outfile2.WriteLine(smileave.Sum());
             outfile2.Flush();
             //add nonverbal feature to nonverbalRecordOBJ array record per second
-            nonverbalRecordOBJ[nonverbal_index] = new nonverbalRecord();
+           
             nonverbalRecordOBJ[nonverbal_index].timeStamp = System.DateTime.Now.ToString("u");
             nonverbalRecordOBJ[nonverbal_index].smileIntensity = smileave.Sum();
             nonverbalRecordOBJ[nonverbal_index].nodIntensity = nodave.Sum();
             nonverbalRecordOBJ[nonverbal_index].eyeContactIntensity = eyeave.Sum();
-
+            //indicate the beginning of the interview
+            if (nonverbal_index == 0)
+                nonverbalRecordOBJ[nonverbal_index].begin_end = "begin";
+            else
+                nonverbalRecordOBJ[nonverbal_index].begin_end = "-";
+            //increment index
             nonverbal_index++;
 
             //Console.WriteLine("hi ben!");
@@ -660,6 +721,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         StreamWriter outfile1 = new StreamWriter("AllTxtFiles1.txt");
         StreamWriter outfile2 = new StreamWriter("smile_intensity.txt");
 
+        //for scroll down
+        
+
+
         private void UpdateMesh()
         {
             MediaElement mysound = new MediaElement();
@@ -763,7 +828,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //if (mundOffen5 < 0.23 && mundOffen6 < 0.23)
                 //if (mundOffen5 < 0.35 && mundOffen6 < 0.35)
                 //avoid mistook head tilt for smile 
-                if (mundOffen5 < 0.055 && mundOffen6 < 0.055 && -0.1 < mundOffen18 && mundOffen18 < 0.1)
+                //0.055
+                if (mundOffen5 < 0.1 && mundOffen6 < 0.1 && -0.1 < mundOffen18 && mundOffen18 < 0.1)
                 {
                     smile = "1";
                     smileave[threadtime] = 1;
@@ -774,7 +840,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     smile = "0";
                 }
                 //可調下方的值已控制nod的偵測靈敏度
-                if (mundOffen17 < 0.006)
+                if (mundOffen17 < 2)//0.006
                 {
                     //len.Text = mundOffen17.ToString();
                     nodave[threadtime] = 1;
@@ -878,7 +944,9 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.Foreground = RedBrush;
                     Paragraph para = new Paragraph(redRun);
                     para.LineHeight = 10;
+                    
                     richTextBox1.Document.Blocks.Add(para);
+                    richTextBox1.ScrollToEnd();
                     flag1 = 1;
                 }
                 if (i % 2 == 0 && qa[i].Length <= 9)
@@ -888,6 +956,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.FontSize = 18;
                     redRun.Foreground = RedBrush;
                     richTextBox1.Document.Blocks.Add(new Paragraph(redRun));
+                    richTextBox1.ScrollToEnd();
                 }
                 if (i % 2 == 1 && qa[i].Length > 9)
                 {
@@ -896,6 +965,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.FontSize = 18;
                     redRun.Foreground = greenBrush;
                     richTextBox1.Document.Blocks.Add(new Paragraph(redRun));
+                    richTextBox1.ScrollToEnd();
                     if (flag1 == 1)
                     {
                         flag1 = 0;
@@ -908,6 +978,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.FontSize = 18;
                     redRun.Foreground = greenBrush;
                     richTextBox1.Document.Blocks.Add(new Paragraph(redRun));
+                    richTextBox1.ScrollToEnd();
                     if (flag1 == 1)
                     {
                         flag1 = 0;
@@ -1051,13 +1122,18 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             canvas1.Children.Add(volumebar);
             //    canvas1.Children.Add(speakingratebar);
 
+//現場DEMO須調整的
+            //adjust the face capturing square position
             for (int i = 0; i < vertices.Count; i++)
             {
                 CameraSpacePoint vert = vertices[i];
                 DepthSpacePoint point = sensor.CoordinateMapper.MapCameraPointToDepthSpace(vert);
                 if (float.IsInfinity(vert.X) || float.IsInfinity(vert.Y)) return;
-                Canvas.SetLeft(rec, point.X / 1.5); //123456789
-                Canvas.SetTop(rec, point.Y / 2.5);
+                
+                //adjust the x position of face capturing square position
+                Canvas.SetLeft(rec, point.X / 1.5); //123456789  1.5   2.5
+                //adjust the y position of face capturing square position
+                Canvas.SetTop(rec, point.Y / 5.5);
             }
             canvas2.Children.Add(rec);
 
@@ -1321,7 +1397,9 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //nonverbal_Timer.Tick += new EventHandler(captureSmilePS);
             //nonverbal_Timer.Interval = 1000;
             //start record user's nonverbal feature
-            nonverbal_Timer.Enabled = true;
+            nonverbal_Timer.Start();
+
+            
 
 
             /* Process videocmd = new Process();
@@ -1532,16 +1610,39 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
             //stop nonverbal timer because the interview has come to an end
             // stop the timer
-            nonverbal_Timer.Enabled = false;
+            nonverbal_Timer.Stop();
 
 
+            //System.Threading.Thread.Sleep(1800);
+            
+                //begin send nonverbal feature to back end 
+            //Turn it into json
+            JSonHelper helper0 = new JSonHelper();
+            string jsonResult = helper0.ConvertObjectToJSon(nonverbalRecordOBJ);
+            //Console.WriteLine("jsonResult Converter test" + jsonResult);
 
-            //send nonverbal feature to back end 
-            /**
-             * 
-             * 
-             * 
-             * */
+            //tcp to send json to back end
+            TcpClient tcpclnt = new TcpClient();
+
+            tcpclnt.Connect("54.191.185.244", 8084); // use the ipaddress as in the server program
+
+            Stream stm = tcpclnt.GetStream();
+
+            //encode UTF8
+            Byte[] nonverbal_data = Encoding.UTF8.GetBytes(jsonResult);
+
+            //encode ASCII
+            /*
+            ASCIIEncoding asen = new ASCIIEncoding();
+            byte[] ba = asen.GetBytes(jsonResult);
+            */
+
+            stm.Write(nonverbal_data, 0, nonverbal_data.Length);
+
+            tcpclnt.Close();
+            //end send nonverbal feature to back end 
+
+            Console.WriteLine("jsonResult Converter test" + jsonResult);
         }
 
         private void message()
@@ -1599,11 +1700,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         {
             string returnData = "";
             //run back end Q generation program on 學長's PC
-            UdpClient udpClient = new UdpClient("140.116.82.104", 8082);
+            //UdpClient udpClient = new UdpClient("140.116.82.104", 8082);
 
             //run back end Q generation program on AWS cloud server
-
-            //UdpClient udpClient = new UdpClient("54.244.174.89", 8082);
+            UdpClient udpClient = new UdpClient("54.244.174.89", 8082);
 
             //
             Byte[] sendBytes = Encoding.UTF8.GetBytes(answer);
