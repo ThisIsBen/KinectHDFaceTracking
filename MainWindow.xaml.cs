@@ -840,7 +840,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     smile = "0";
                 }
                 //可調下方的值已控制nod的偵測靈敏度
-                if (mundOffen17 < 2)//0.006
+                if (mundOffen17 >0.01)//0.006
                 {
                     //len.Text = mundOffen17.ToString();
                     nodave[threadtime] = 1;
