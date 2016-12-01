@@ -357,7 +357,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //3D人物
-            web1.Navigate("http://localhost/3d.htm");
+            
+            web1.Navigate("http://localhost/3d.htm");// http://localhost/iisstart.htm
             for (int i = 0; i < this.bodyCount; i++)
             {
                 if (this.faceFrameReaders[i] != null)
@@ -719,10 +720,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         double speakingrate = 0;
         String interview_state = "";
         StreamWriter outfile1 = new StreamWriter("AllTxtFiles1.txt");
+        
         StreamWriter outfile2 = new StreamWriter("smile_intensity.txt");
+        StreamWriter outfile3 = new StreamWriter("Smile_Feature_TrainingData.txt");
 
         //for scroll down
-        
+
 
 
         private void UpdateMesh()
@@ -801,7 +804,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             float mundOffen18 = currentFaceAlignment.FaceOrientation.Z;
 
 
-            String AU, AU1;
+            String AU, AU1, AUSmile;
             //AU所輸出的值
             AU1 = "JawOpen " + mundOffen0.ToString() + " JawSlideRight " + mundOffen1.ToString() + " LeftcheekPuff " + mundOffen2.ToString() + " LefteyebrowLowerer " + mundOffen3.ToString() + " LefteyeClosed " + mundOffen4.ToString()
                 + " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + " LipCornerPullerLeft " + mundOffen7.ToString() + " LipCornerPullerRight " + mundOffen8.ToString()
@@ -811,9 +814,18 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //
             outfile1.WriteLine(AU1);
             outfile1.Flush();
-            // Console.WriteLine(AU1);
-            // Console.WriteLine(AU);
-            //
+
+            //get smile feature to file
+            /*AU1 = " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + "JawOpen " + mundOffen0.ToString() + " LipStretcherLeft " + mundOffen10.ToString() + " LipStretcherRight " + mundOffen11.ToString() +
+                " LeftcheekPuff " + mundOffen2.ToString() + " RightcheekPuff " + mundOffen14.ToString() + " LefteyeClosed " + mundOffen4.ToString()
+                + " RighteyeClosed " + mundOffen16.ToString();
+            */
+            AUSmile = " 1:" + mundOffen5.ToString() + " 2:" + mundOffen6.ToString() + " 3:" + mundOffen0.ToString() + " 4:" + mundOffen10.ToString() + " 5:" + mundOffen11.ToString() +
+                " 6:" + mundOffen2.ToString() + " 7:" + mundOffen14.ToString() + " 8:" + mundOffen4.ToString()
+                + " 9:" + mundOffen16.ToString()+"\n";
+            outfile3.WriteLine(AUSmile);
+            outfile3.Flush();
+            //end get smile feature to file
 
             mouthopen = mundOffen0;
             //len.Text = mundOffen17.ToString();
@@ -868,8 +880,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 volume = db.ToString();
             }
 
-            /* outfile1.Write(AU1);
-             outfile1.Close();*/
+            
 
             canvas1.Children.Clear();
             canvas2.Children.Clear();
@@ -1140,9 +1151,9 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             if (buttonclick == 1)
             {
                 summary = interview_state + " " + smile + " " + nod + " " + eye + " " + volume + " " + sitepal;
-                //summary = mundOffen17.ToString();
-                outfile1.WriteLine(summary);
-                outfile1.Flush();
+                
+
+                
             }
 
             //increase index of array

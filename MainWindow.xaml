@@ -26,7 +26,7 @@
         <Button Name="newwindow" Content="color close" HorizontalAlignment="Left" Margin="175,817,0,0" VerticalAlignment="Top" Width="115" Click="Button_Click_1" Height="38"/>
         <Button Name="newwindow1" Content="action close" HorizontalAlignment="Left" Margin="337,817,0,0" VerticalAlignment="Top" Width="109" Height="38" RenderTransformOrigin="0.379,0.578" Click="newwindow1_Click"/>
         <Button Name="right" Content="close all" HorizontalAlignment="Left" Margin="490,817,0,0" VerticalAlignment="Top" Width="113" Height="38" Click="close_Click"/-->
-        <WebBrowser Name="web1" HorizontalAlignment="Left" Margin="10,10,0,10" Width="781" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
+        <WebBrowser Name="web1"  HorizontalAlignment="Left" Margin="10,10,0,10" Width="781" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
         <Grid Margin="796,0,-382,-13" Name="feedback" Background="#FFACEEA6" Grid.ColumnSpan="2">
             <Image Name="face" Margin="4,623,7,-3" Height="227" VerticalAlignment="Top" RenderTransformOrigin="0.5,1.471"/>
             <Canvas Name="canvas2" HorizontalAlignment="Left" Height="238" Margin="4,623,0,-16" VerticalAlignment="Top" Width="417"/>
