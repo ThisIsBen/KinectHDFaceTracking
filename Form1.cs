@@ -18,8 +18,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             InitializeComponent();
             rele();
             //show nonverbal chart 
-            nonverbal_webBrowser.Navigate("https://dotblogs.com.tw/code6421/archive/2009/04/09/7947.aspx");
+            nonverbal_webBrowser.Navigate("http://54.191.185.244/linechart.html");//
+            ///////////////
 
+
+
+
+
+            ///////////////
         }
 
         public void rele()

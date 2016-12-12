@@ -722,7 +722,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         StreamWriter outfile1 = new StreamWriter("AllTxtFiles1.txt");
         
         StreamWriter outfile2 = new StreamWriter("smile_intensity.txt");
-        StreamWriter outfile3 = new StreamWriter("Smile_Feature_TrainingData.txt");
+        StreamWriter outfile3 = new StreamWriter("Smile_Feature_TrainingData.txt",true);//append lines to file
 
         //for scroll down
 
@@ -804,7 +804,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             float mundOffen18 = currentFaceAlignment.FaceOrientation.Z;
 
 
-            String AU, AU1, AUSmile;
+            String AU, AU1, AUSmile,SmileScore;
+
             //AU所輸出的值
             AU1 = "JawOpen " + mundOffen0.ToString() + " JawSlideRight " + mundOffen1.ToString() + " LeftcheekPuff " + mundOffen2.ToString() + " LefteyebrowLowerer " + mundOffen3.ToString() + " LefteyeClosed " + mundOffen4.ToString()
                 + " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + " LipCornerPullerLeft " + mundOffen7.ToString() + " LipCornerPullerRight " + mundOffen8.ToString()
@@ -820,7 +821,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 " LeftcheekPuff " + mundOffen2.ToString() + " RightcheekPuff " + mundOffen14.ToString() + " LefteyeClosed " + mundOffen4.ToString()
                 + " RighteyeClosed " + mundOffen16.ToString();
             */
-            AUSmile = " 1:" + mundOffen5.ToString() + " 2:" + mundOffen6.ToString() + " 3:" + mundOffen0.ToString() + " 4:" + mundOffen10.ToString() + " 5:" + mundOffen11.ToString() +
+            SmileScore = "0";
+            AUSmile = SmileScore+ " 1:" + mundOffen5.ToString() + " 2:" + mundOffen6.ToString() + " 3:" + mundOffen0.ToString() + " 4:" + mundOffen10.ToString() + " 5:" + mundOffen11.ToString() +
                 " 6:" + mundOffen2.ToString() + " 7:" + mundOffen14.ToString() + " 8:" + mundOffen4.ToString()
                 + " 9:" + mundOffen16.ToString()+"\n";
             outfile3.WriteLine(AUSmile);
@@ -1400,6 +1402,15 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         private void work()
         {
+            /*
+            //start record video
+            Process record_cmd = new Process();
+            record_cmd.StartInfo.FileName = "python";
+            record_cmd.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
+            record_cmd.Start();
+            record_cmd.WaitForExit();
+            */
+
             //capture smile value per second
             // Create a timer with a two second interval.
             nonverbal_Timer = new System.Timers.Timer(1000);
@@ -1502,7 +1513,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 Process cmd1 = new Process();
                 cmd1.StartInfo.FileName = "python";
                 cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
-                cmd1.Start();
+                cmd1.Start(); 
                 cmd1.WaitForExit();
                 //call asr
 
@@ -1562,7 +1573,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //wait 1.8 second for python speechtotext program to write text to file.
                 //但speech_to_text.txt的內容都沒更新!!solved
                 //但speech_to_text.txt可事先不存在也可以囉!
-                System.Threading.Thread.Sleep(1800);
+                System.Threading.Thread.Sleep(2000);
 
 
                 //text = speech2textReader.ReadLine();
