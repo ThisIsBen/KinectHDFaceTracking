@@ -89,6 +89,11 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         //set up a timer to get nonverbal data per second
         private static System.Timers.Timer nonverbal_Timer;
+
+        //set up a timer to get 9 facial AUs per 0.5 sec
+        private static System.Timers.Timer facialAU_Timer;
+
+
         //set up nonverbal record OBJ array to store nonverbal feature as long as 20 minutes with unit:sec
         const int nonverbalAryNum=600;//for 10 mins interview
         nonverbalRecord[] nonverbalRecordOBJ = new nonverbalRecord[nonverbalAryNum];
@@ -287,6 +292,19 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
             //Console.WriteLine("hi ben!");
             //}
+        }
+
+
+
+        private void GetSmileAUOnTimeEvent(Object source, System.Timers.ElapsedEventArgs e)
+
+        {
+            SmileScore = "0";
+            AUSmile = SmileScore + " 1:" + facialAU[0] + " 2:" + facialAU[1] + " 3:" + facialAU[2] + " 4:" + facialAU[3] + " 5:" + facialAU[4] +
+                " 6:" + facialAU[5] + " 7:" + facialAU[6] + " 8:" + facialAU[7]
+                + " 9:" + facialAU[8] + "\n";
+            outfile3.WriteLine(AUSmile);
+            outfile3.Flush();
         }
 
         public void Initializewindow()
@@ -709,7 +727,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         string sitepal = null;
         int number = -1;
         int flag = 0;
-        double mouthopen = 0;
+        //double mouthopen = 0;
         int answeropensmile = 0;
         int threadtime = 0;
         String line = "";
@@ -717,12 +735,18 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         int[] nodave = new int[30];
         int[] eyeave = new int[30];
         double[] volumeave = new double[30];
+
+        //to store the 9 facial AUs ,which updates every 1/30sec.
+        string[] facialAU = new string[9];
+        string AUSmile, SmileScore;
+
+
         double speakingrate = 0;
         String interview_state = "";
-        StreamWriter outfile1 = new StreamWriter("AllTxtFiles1.txt");
+        StreamWriter outfile1 = new StreamWriter("All_AU.txt");
         
-        StreamWriter outfile2 = new StreamWriter("smile_intensity.txt");
-        StreamWriter outfile3 = new StreamWriter("Smile_Feature_TrainingData.txt",true);//append lines to file
+        StreamWriter outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
+        StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");//append lines to file
 
         //for scroll down
 
@@ -804,7 +828,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             float mundOffen18 = currentFaceAlignment.FaceOrientation.Z;
 
 
-            String AU, AU1, AUSmile,SmileScore;
+            String AU, AU1 ;
 
             //AU所輸出的值
             AU1 = "JawOpen " + mundOffen0.ToString() + " JawSlideRight " + mundOffen1.ToString() + " LeftcheekPuff " + mundOffen2.ToString() + " LefteyebrowLowerer " + mundOffen3.ToString() + " LefteyeClosed " + mundOffen4.ToString()
@@ -821,20 +845,30 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 " LeftcheekPuff " + mundOffen2.ToString() + " RightcheekPuff " + mundOffen14.ToString() + " LefteyeClosed " + mundOffen4.ToString()
                 + " RighteyeClosed " + mundOffen16.ToString();
             */
-            SmileScore = "0";
-            AUSmile = SmileScore+ " 1:" + mundOffen5.ToString() + " 2:" + mundOffen6.ToString() + " 3:" + mundOffen0.ToString() + " 4:" + mundOffen10.ToString() + " 5:" + mundOffen11.ToString() +
-                " 6:" + mundOffen2.ToString() + " 7:" + mundOffen14.ToString() + " 8:" + mundOffen4.ToString()
-                + " 9:" + mundOffen16.ToString()+"\n";
-            outfile3.WriteLine(AUSmile);
-            outfile3.Flush();
+
+            //store the current 9 facial AUs in an array
+            facialAU[0] = mundOffen5.ToString();
+            facialAU[1] = mundOffen6.ToString();
+            facialAU[2] = mundOffen0.ToString();
+            facialAU[3] = mundOffen10.ToString();
+            facialAU[4] = mundOffen11.ToString();
+            facialAU[5] = mundOffen2.ToString();
+            facialAU[6] = mundOffen14.ToString();
+            facialAU[7] = mundOffen4.ToString();
+            facialAU[8] = mundOffen16.ToString();
+
+
+
+
+           
             //end get smile feature to file
 
-            mouthopen = mundOffen0;
+            //mouthopen = mundOffen0;
             //len.Text = mundOffen17.ToString();
 
             //test.Text = mundOffen5.ToString();
             // smile = " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString();
-            //  if (buttonclick == 1)
+            if (buttonclick == 1)
             {
                 //辨識微笑、點頭.....並且記錄每個frame有沒有這些動作
                 //可調下方的值已控制微笑的偵測靈敏度
@@ -1416,12 +1450,20 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             nonverbal_Timer = new System.Timers.Timer(1000);
 
             nonverbal_Timer.Elapsed += OnTimedEvent;
-            //nonverbal_Timer.Tick += new EventHandler(captureSmilePS);
-            //nonverbal_Timer.Interval = 1000;
+           
             //start record user's nonverbal feature
             nonverbal_Timer.Start();
 
-            
+
+
+            //set the timer that go off every 0.5 sec to capture 9-facial AUs
+            facialAU_Timer = new System.Timers.Timer(500);
+
+            facialAU_Timer.Elapsed += GetSmileAUOnTimeEvent;
+
+            //start record user's facial AUs
+            facialAU_Timer.Start();
+
 
 
             /* Process videocmd = new Process();
@@ -1432,7 +1474,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             String[,] question = new String[6, 6];
             String[] temp = new String[5];
             String answer = "";
-            int speaktime = 0;
+            //int speaktime = 0;
             string nextquestion = "你好,";
             Random qnumber = new Random();
             int ran = 0;
@@ -1630,14 +1672,28 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             qa.Write(answer);
             qa.Close();
 
-            //stop nonverbal timer because the interview has come to an end
-            // stop the timer
+            //stop nonverbal timer and facialAU timer because the interview has come to an end
+            // stop the nonverbal timer
             nonverbal_Timer.Stop();
 
+            // stop the facialAU timer
+            facialAU_Timer.Stop();
 
             //System.Threading.Thread.Sleep(1800);
-            
-                //begin send nonverbal feature to back end 
+
+            //begin send nonverbal feature to AWS back end :"54.191.185.244", 8084
+            sendNonverbalRecord();
+            //end send nonverbal feature to back end 
+
+            //Console.WriteLine("jsonResult Converter test" + jsonResult);
+
+            //send smileTest.txt file to AWS back end::"54.191.185.244", 8084
+            sendSmileTestFile();
+        }
+
+        public void sendNonverbalRecord()
+        {
+
             //Turn it into json
             JSonHelper helper0 = new JSonHelper();
             string jsonResult = helper0.ConvertObjectToJSon(nonverbalRecordOBJ);
@@ -1653,19 +1709,57 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //encode UTF8
             Byte[] nonverbal_data = Encoding.UTF8.GetBytes(jsonResult);
 
-            //encode ASCII
-            /*
-            ASCIIEncoding asen = new ASCIIEncoding();
-            byte[] ba = asen.GetBytes(jsonResult);
-            */
+        
 
             stm.Write(nonverbal_data, 0, nonverbal_data.Length);
 
             tcpclnt.Close();
-            //end send nonverbal feature to back end 
 
-            Console.WriteLine("jsonResult Converter test" + jsonResult);
+
+         }
+
+        public void sendSmileTestFile()
+        {
+            
+            string lineInFile;
+            string facialAUPackage = "";
+            System.IO.StreamReader file = new System.IO.StreamReader("E:/temp/SVM/SVM/smileTest.txt");
+            while ((lineInFile = file.ReadLine()) != null)
+            {
+                //Console.WriteLine(line);
+                facialAUPackage += lineInFile + "\n";
+            }
+
+            file.Close();
+
+            //Console.Write(facialAUPackage);
+
+            //JSonHelper helper0 = new JSonHelper();
+
+            //Console.WriteLine("jsonResult Converter test" + jsonResult);
+
+            
+            //tcp to send json to back end
+            TcpClient tcpclnt = new TcpClient();
+
+            tcpclnt.Connect("54.191.185.244", 8087); // use the ipaddress as in the server program
+
+            Stream stm = tcpclnt.GetStream();
+
+            //encode UTF8
+            Byte[] facialAU_data = Encoding.UTF8.GetBytes(facialAUPackage);
+
+            //encode ASCII
+
+
+            stm.Write(facialAU_data, 0, facialAU_data.Length);
+
+            tcpclnt.Close();
+
+
+
         }
+
 
         private void message()
         {
