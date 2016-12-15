@@ -746,7 +746,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         StreamWriter outfile1 = new StreamWriter("All_AU.txt");
         
         StreamWriter outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
-        StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");//append lines to file
+        StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
 
         //for scroll down
 
@@ -837,8 +837,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                  + " RightcheekPuff " + mundOffen14.ToString() + " RighteyebrowLowerer " + mundOffen15.ToString() + " RighteyeClosed " + mundOffen16.ToString() + " Nod " + mundOffen17.ToString() + " Tilt " + mundOffen18.ToString();
             AU = mundOffen0.ToString();
             //
-            outfile1.WriteLine(AU1);
-            outfile1.Flush();
+            //outfile1.WriteLine(AU1);
+            //outfile1.Flush();
 
             //get smile feature to file
             /*AU1 = " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + "JawOpen " + mundOffen0.ToString() + " LipStretcherLeft " + mundOffen10.ToString() + " LipStretcherRight " + mundOffen11.ToString() +
@@ -1671,14 +1671,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             }
             qa.Write(answer);
             qa.Close();
-
+            outfile1.Close();
             //stop nonverbal timer and facialAU timer because the interview has come to an end
             // stop the nonverbal timer
             nonverbal_Timer.Stop();
-
+            outfile2.Close();
             // stop the facialAU timer
             facialAU_Timer.Stop();
-
+            outfile3.Close();
             //System.Threading.Thread.Sleep(1800);
 
             //begin send nonverbal feature to AWS back end :"54.191.185.244", 8084
@@ -1688,7 +1688,69 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //Console.WriteLine("jsonResult Converter test" + jsonResult);
 
             //send smileTest.txt file to AWS back end::"54.191.185.244", 8084
-            sendSmileTestFile();
+            int waitFileTimes = 0;
+            while (true)
+            {
+                waitFileTimes++;
+                if (WaitForFile("E:/temp/SVM/SVM/smileTest.txt"))
+                {
+                    sendSmileTestFile();
+                    break;
+                }
+
+                if(waitFileTimes>10)
+                {
+                    break;
+                }
+            }
+            outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
+            outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
+        }
+
+
+
+        public bool WaitForFile(string fullPath)
+        {
+            int numTries = 0;
+            while (true)
+            {
+                ++numTries;
+                try
+                {
+                    // Attempt to open the file exclusively.
+                    using (FileStream fs = new FileStream(fullPath,
+                        FileMode.Open, FileAccess.ReadWrite,
+                        FileShare.None, 100))
+                    {
+                        fs.ReadByte();
+
+                        // If we got this far the file is ready
+                        break;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(
+                       "WaitForFile {0} failed to get an exclusive lock: {1}",
+                        fullPath, ex.ToString());
+                    
+                    if (numTries > 10)
+                    {
+                        Console.WriteLine(
+                            "WaitForFile {0} giving up after 10 tries",
+                            fullPath);
+                        return false;
+                    }
+
+                    // Wait for the lock to be released
+                    System.Threading.Thread.Sleep(500);
+                }
+            }
+
+            Console.WriteLine("WaitForFile {0} returning true after {1} tries",
+                fullPath, numTries);
+            return true;
         }
 
         public void sendNonverbalRecord()
@@ -1723,6 +1785,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             
             string lineInFile;
             string facialAUPackage = "";
+
             System.IO.StreamReader file = new System.IO.StreamReader("E:/temp/SVM/SVM/smileTest.txt");
             while ((lineInFile = file.ReadLine()) != null)
             {
