@@ -847,12 +847,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             */
 
             //store the current 9 facial AUs in an array
-            facialAU[0] = mundOffen5.ToString();
+            facialAU[0] = mundOffen5.ToString();//shrink its impact
             facialAU[1] = mundOffen6.ToString();
             facialAU[2] = mundOffen0.ToString();
             facialAU[3] = mundOffen10.ToString();
-            facialAU[4] = mundOffen11.ToString();
-            facialAU[5] = mundOffen2.ToString();
+            facialAU[4] = mundOffen11.ToString();//shrink its impact
+            facialAU[5] = mundOffen2.ToString();//shrink its impact
             facialAU[6] = mundOffen14.ToString();
             facialAU[7] = mundOffen4.ToString();
             facialAU[8] = mundOffen16.ToString();
@@ -1615,7 +1615,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //wait 1.8 second for python speechtotext program to write text to file.
                 //但speech_to_text.txt的內容都沒更新!!solved
                 //但speech_to_text.txt可事先不存在也可以囉!
-                System.Threading.Thread.Sleep(2000);
+                System.Threading.Thread.Sleep(4000);
 
 
                 //text = speech2textReader.ReadLine();

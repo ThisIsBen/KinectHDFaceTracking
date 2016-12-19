@@ -11,23 +11,52 @@ using System.IO;
 
 namespace Microsoft.Samples.Kinect.HDFaceBasics
 {
+   
     public partial class Form1 : Form
     {
+
+
+        //set up a timer to get 9 facial AUs per 0.5 sec
+        private static System.Timers.Timer Video_Timer;
+
+        //cross thread 
+        //使用lambda
+       
+
+
         public Form1()
         {
             InitializeComponent();
+            //cross thread
+            Form.CheckForIllegalCrossThreadCalls = false;
+
             rele();
             //show nonverbal chart 
             nonverbal_webBrowser.Navigate("http://54.191.185.244/linechart.html");//
-            ///////////////
+                                                                                  ///////////////
 
+            //set the timer that go off every 0.5 sec to capture 9-facial AUs
+            Video_Timer = new System.Timers.Timer(1000);
 
+            Video_Timer.Elapsed += GetCurrentPosionOnTimeEvent;
 
+            
 
 
             ///////////////
         }
 
+       
+        private void GetCurrentPosionOnTimeEvent(Object source, System.Timers.ElapsedEventArgs e)
+
+        {
+            //Your Code Here
+            Console.WriteLine(axWindowsMediaPlayer1.Ctlcontrols.currentPositionString);
+            pictureBox1.Left += 6;
+
+
+
+        }
         public void rele()
         {
             StreamReader sr = new StreamReader("allQA.txt");
@@ -116,6 +145,44 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
            // label1.Text = "Records Read = " + progressBar1.Value.ToString();
             // Create a Button object 
         
+        }
+
+        private void axWindowsMediaPlayer1_ClickEvent(object sender, AxWMPLib._WMPOCXEvents_ClickEvent e)
+        {
+            axWindowsMediaPlayer1.URL = "C:/Users/Ben/Videos/hi.mp4";
+            axWindowsMediaPlayer1.Ctlcontrols.play(); // activates the play button
+                                                      //axWindowsMediaPlayer1.Ctlcontrols.stop(); // activates the stop button
+                                                      //start record user's facial AUs
+            Video_Timer.Start();
+        }
+
+        private void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (e.newState == 2)//pause timer
+            {
+                //Your Code Here
+                Video_Timer.Stop();
+               
+
+
+            }
+            if (e.newState == 3)//restart timer
+            {
+                //Your Code Here
+                Video_Timer.Start();
+
+
+
+            }
+            if (e.newState == 8)//detect if the video ends
+            {
+                //Your Code Here
+                Video_Timer.Stop();
+                Console.WriteLine("end");
+               
+
+            }
+           
         }
     }
 }

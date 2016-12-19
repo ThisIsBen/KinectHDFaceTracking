@@ -68,8 +68,8 @@ E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.g.r
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Properties.Resources.resources
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\HDFaceBasics-WPF.csproj.GenerateResource.Cache
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Kinect.Tools.dll
-E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Form1.resources
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Interop.WMPLib.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\AxInterop.WMPLib.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Interop.WMPLib.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\AxInterop.WMPLib.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Form1.resources
