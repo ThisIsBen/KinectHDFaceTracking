@@ -36,8 +36,8 @@ namespace SimpleCaptureCSharp
             // do not forget to set file to .avi format if you use Video Codec Name
             // capturer.CurrentVideoCodecName = "Bytescout Lossless";             
 
-            capturer.OutputWidth = 320;
-            capturer.OutputHeight = 240;
+            capturer.OutputWidth = 363;
+            capturer.OutputHeight = 180;
 
         }
 
@@ -48,7 +48,7 @@ namespace SimpleCaptureCSharp
 
             capturer.Run(); // run screen video capturing 
 
-            Thread.Sleep(1000); // wait for 15 seconds
+            Thread.Sleep(3000); // wait for 15 seconds
 
             capturer.Stop(); // stop video capturing
 
