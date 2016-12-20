@@ -41,15 +41,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
     using System.Windows.Navigation;
     using System.Collections;
-    
-    
-    
+
+
+
     //OBJ->JSON converter
     using System.Runtime.Serialization.Json;
-   
-    
-
-
+    using SimpleCaptureCSharp;
 
     public class JSonHelper
     {
@@ -386,6 +383,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 }
             }
 
+
+            
 
         }
 
@@ -1414,6 +1413,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         Thread oThread = null;
         Thread Camerathread = null;
         //System.Windows.Forms.Timer timer1;
+
+
+
+
+        //video recorder
+        //screen recorder
+        screenRecorder videoRecorder = new screenRecorder(); // create new screen capturer object
+
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
             /* Process videocmd = new Process();
@@ -1453,6 +1460,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
            
             //start record user's nonverbal feature
             nonverbal_Timer.Start();
+
+
+
+
+            //start video recorder
+            videoRecorder.startRecording();
+
+
 
 
 

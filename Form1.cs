@@ -8,6 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
+
+
+
+
+
 
 namespace Microsoft.Samples.Kinect.HDFaceBasics
 {
@@ -30,7 +36,11 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //cross thread
             Form.CheckForIllegalCrossThreadCalls = false;
 
-            rele();
+            //CaptureMoni();//run screen recorder
+           
+               
+
+            //rele();
             //show nonverbal chart 
             nonverbal_webBrowser.Navigate("http://54.191.185.244/linechart.html");//
                                                                                   ///////////////
@@ -149,11 +159,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         private void axWindowsMediaPlayer1_ClickEvent(object sender, AxWMPLib._WMPOCXEvents_ClickEvent e)
         {
-            axWindowsMediaPlayer1.URL = "C:/Users/Ben/Videos/hi.mp4";
+            axWindowsMediaPlayer1.URL = "C:/Users/Ben/Videos/interviewVideo.avi";
             axWindowsMediaPlayer1.Ctlcontrols.play(); // activates the play button
                                                       //axWindowsMediaPlayer1.Ctlcontrols.stop(); // activates the stop button
                                                       //start record user's facial AUs
             Video_Timer.Start();
+            
         }
 
         private void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
@@ -179,10 +190,38 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //Your Code Here
                 Video_Timer.Stop();
                 Console.WriteLine("end");
-               
+                pictureBox1.Left = 462;
 
             }
            
         }
+
+
+
+        /*
+        public void CaptureMoni()
+        {
+
+            try
+            {
+                Rectangle _screenRectangle = Screen.PrimaryScreen.Bounds;
+                Expression.Encoder.ScreenCapture.ScreenCaptureJob _screenCaptureJob = new Expression.Encoder.ScreenCapture.ScreenCaptureJob();
+                _screenCaptureJob.CaptureRectangle = _screenRectangle;
+                _screenCaptureJob.ShowFlashingBoundary = true;
+                _screenCaptureJob.ScreenCaptureVideoProfile.FrameRate = 20;
+                _screenCaptureJob.CaptureMouseCursor = true;
+
+                _screenCaptureJob.OutputScreenCaptureFileName = string.Format(@"C:/Users/Ben/Videos/test.wmv");
+                if (File.Exists(_screenCaptureJob.OutputScreenCaptureFileName))
+                {
+                    File.Delete(_screenCaptureJob.OutputScreenCaptureFileName);
+                }
+                _screenCaptureJob.Start();
+                Thread.Sleep(1000); // wait for 15 seconds
+                _screenCaptureJob.Stop();
+            }
+            catch (Exception e) { }
+        }
+        */
     }
 }

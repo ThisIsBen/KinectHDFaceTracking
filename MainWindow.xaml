@@ -5,6 +5,8 @@
         Title="HDFace Basics"
         Name="mainwindow"
         Height="910.365" Width="1244"
+        Left="200"
+        Top="0"
         xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         Closing="MainWindow_Closing" ResizeMode="NoResize"
         Loaded="Window_Loaded" Background="#FFACEEA6"

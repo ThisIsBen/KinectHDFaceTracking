@@ -73,3 +73,11 @@ E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\AxInterop.WMPLib.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Interop.WMPLib.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\AxInterop.WMPLib.dll
 E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\obj\x64\Debug\Microsoft.Samples.Kinect.HDFaceBasics.Form1.resources
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.Api2.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.Types.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.Utilities.dll
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.xml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.Api2.xml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.Types.xml
+E:\temp\HDFaceBasics-WPF\KinectHDFaceTracking\bin\x64\Debug\Microsoft.Expression.Encoder.Utilities.xml
