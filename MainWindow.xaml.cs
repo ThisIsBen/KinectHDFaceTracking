@@ -26,7 +26,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
     using System.Net.Sockets;
     using System.Linq;
     using System.Net;
-    using System.Diagnostics;
     using System.Text;
     using NAudio.Wave;
 
@@ -46,7 +45,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
     //OBJ->JSON converter
     using System.Runtime.Serialization.Json;
-    using SimpleCaptureCSharp;
+
 
     public class JSonHelper
     {
@@ -306,7 +305,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         public void Initializewindow()
         {
-
+            
             SolidColorBrush transBrush = new SolidColorBrush();
             transBrush.Color = Colors.Transparent;
 
@@ -742,7 +741,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         double speakingrate = 0;
         String interview_state = "";
-        StreamWriter outfile1 = new StreamWriter("All_AU.txt");
+        //StreamWriter outfile1 = new StreamWriter("All_AU.txt");
         
         StreamWriter outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
         StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
@@ -825,25 +824,23 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             float mundOffen16 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RighteyeClosed];
             float mundOffen17 = currentFaceAlignment.FaceOrientation.X;
             float mundOffen18 = currentFaceAlignment.FaceOrientation.Z;
-
+            float mundOffen19 = currentFaceAlignment.FaceOrientation.Y;
 
             String AU, AU1 ;
-
+            
             //AU所輸出的值
+            AU = mundOffen0.ToString();
+            /*
             AU1 = "JawOpen " + mundOffen0.ToString() + " JawSlideRight " + mundOffen1.ToString() + " LeftcheekPuff " + mundOffen2.ToString() + " LefteyebrowLowerer " + mundOffen3.ToString() + " LefteyeClosed " + mundOffen4.ToString()
                 + " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + " LipCornerPullerLeft " + mundOffen7.ToString() + " LipCornerPullerRight " + mundOffen8.ToString()
                  + " LipPucker " + mundOffen9.ToString() + " LipStretcherLeft " + mundOffen10.ToString() + " LipStretcherRight " + mundOffen11.ToString() + " LowerlipDepressorLeft " + mundOffen12.ToString() + " LowerlipDepressorRight " + mundOffen13.ToString()
-                 + " RightcheekPuff " + mundOffen14.ToString() + " RighteyebrowLowerer " + mundOffen15.ToString() + " RighteyeClosed " + mundOffen16.ToString() + " Nod " + mundOffen17.ToString() + " Tilt " + mundOffen18.ToString();
-            AU = mundOffen0.ToString();
-            //
-            //outfile1.WriteLine(AU1);
-            //outfile1.Flush();
-
-            //get smile feature to file
-            /*AU1 = " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + "JawOpen " + mundOffen0.ToString() + " LipStretcherLeft " + mundOffen10.ToString() + " LipStretcherRight " + mundOffen11.ToString() +
-                " LeftcheekPuff " + mundOffen2.ToString() + " RightcheekPuff " + mundOffen14.ToString() + " LefteyeClosed " + mundOffen4.ToString()
-                + " RighteyeClosed " + mundOffen16.ToString();
+                 + " RightcheekPuff " + mundOffen14.ToString() + " RighteyebrowLowerer " + mundOffen15.ToString() + " RighteyeClosed " + mundOffen16.ToString() + " Nod " + mundOffen17.ToString() + " Tilt " + mundOffen18.ToString() + " Yaw " + mundOffen19.ToString();
+            
+            
+            outfile1.WriteLine(AU1);
+            outfile1.Flush();
             */
+            
 
             //store the current 9 facial AUs in an array
             facialAU[0] = mundOffen5.ToString();//shrink its impact
@@ -876,7 +873,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //if (mundOffen5 < 0.35 && mundOffen6 < 0.35)
                 //avoid mistook head tilt for smile 
                 //0.055
-                if (mundOffen5 < 0.1 && mundOffen6 < 0.1 && -0.1 < mundOffen18 && mundOffen18 < 0.1)
+                //可調下方的值已控制smile的偵測靈敏度
+                if (mundOffen5 < 0.03 && mundOffen6 < 0.5 && -0.1 < mundOffen18 && mundOffen18 < 0.1 && mundOffen19 >0.05 && mundOffen17<0)
                 {
                     smile = "1";
                     smileave[threadtime] = 1;
@@ -886,6 +884,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     smileave[threadtime] = 0;
                     smile = "0";
                 }
+                
                 //可調下方的值已控制nod的偵測靈敏度
                 if (mundOffen17 >0.01)//0.006
                 {
@@ -1418,9 +1417,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
         //video recorder
-        //screen recorder
-        screenRecorder videoRecorder = new screenRecorder(); // create new screen capturer object
-
+       
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
             /* Process videocmd = new Process();
@@ -1443,15 +1440,13 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         private void work()
         {
-            /*
-            //start record video
-            Process record_cmd = new Process();
-            record_cmd.StartInfo.FileName = "python";
-            record_cmd.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
-            record_cmd.Start();
-            record_cmd.WaitForExit();
-            */
 
+            //start record video
+            screenVideoRecorder videoRecorder = new screenVideoRecorder();
+            videoRecorder.startScreenVideoRecording();
+
+            //clear the speech_t0_text.txt at the beginning of the interview
+            System.IO.File.WriteAllText(@"speech_to_text.txt", string.Empty);
             //capture smile value per second
             // Create a timer with a two second interval.
             nonverbal_Timer = new System.Timers.Timer(1000);
@@ -1465,14 +1460,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
             //start video recorder
-            videoRecorder.startRecording();
+            //videoRecorder.startRecording();
 
 
 
 
 
-            //set the timer that go off every 0.5 sec to capture 9-facial AUs
-            facialAU_Timer = new System.Timers.Timer(500);
+            //set the timer that go off every 1 sec to capture 9-facial AUs
+            facialAU_Timer = new System.Timers.Timer(1000);
 
             facialAU_Timer.Elapsed += GetSmileAUOnTimeEvent;
 
@@ -1494,7 +1489,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             Random qnumber = new Random();
             int ran = 0;
             //記錄所有qa，並在UpdateMesh()去讀取，然後再印在對話框
-            StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/allQA.txt");
+            StreamWriter qa = new StreamWriter("allQA.txt");
             //StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speech_to_text.txt");
 
 
@@ -1630,12 +1625,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //wait 1.8 second for python speechtotext program to write text to file.
                 //但speech_to_text.txt的內容都沒更新!!solved
                 //但speech_to_text.txt可事先不存在也可以囉!
-                System.Threading.Thread.Sleep(4000);
+               
 
-
-                //text = speech2textReader.ReadLine();
-                ///////////////////////////////////////////////////////////////////
-                //StreamReader reader = new StreamReader("speech_to_text.txt");
+                //wait until the file is released by writting process
+                Thread.Sleep(2800);
+                   
+                
                 text = File.ReadAllLines("speech_to_text.txt")[0];
 
                 /*
@@ -1664,7 +1659,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 */
 
 
-                Console.Read();
+                //Console.Read();
 
 
                 //若錄音城市不成功就用下方此方式輸入你要說的回答句
@@ -1686,8 +1681,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             }
             qa.Write(answer);
             qa.Close();
-            outfile1.Close();
+            //outfile1.Close();
             //stop nonverbal timer and facialAU timer because the interview has come to an end
+
+            //stop recording video
+            videoRecorder.stopScreenVideoRecording();
+
             // stop the nonverbal timer
             nonverbal_Timer.Stop();
             outfile2.Close();
@@ -1703,6 +1702,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //Console.WriteLine("jsonResult Converter test" + jsonResult);
 
             //send smileTest.txt file to AWS back end::"54.191.185.244", 8084
+            sendSmileTestFile();
+            /*
             int waitFileTimes = 0;
             while (true)
             {
@@ -1718,11 +1719,35 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     break;
                 }
             }
+            */
             outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
             outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
         }
 
+        public static bool IsFileReady(String sFilename)
+        {
+            // If the file can be opened for exclusive access it means that the file
+            // is no longer locked by another process.
+            try
+            {
+                using (FileStream inputStream = File.Open(sFilename, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    if (inputStream.Length > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
 
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public bool WaitForFile(string fullPath)
         {
@@ -1759,7 +1784,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     }
 
                     // Wait for the lock to be released
-                    System.Threading.Thread.Sleep(500);
+                    System.Threading.Thread.Sleep(100);
                 }
             }
 
@@ -1839,57 +1864,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         }
 
 
-        private void message()
-        {
-            TcpClient tc = new TcpClient("127.0.0.1", 1800);
-            Console.WriteLine("Server invoked");
-            NetworkStream ns = tc.GetStream();
-            StreamWriter sw = new StreamWriter(ns);
-            sw.WriteLine("a");
-            sw.Flush();
-            //   sw.Close();
-            StreamReader sr = new StreamReader(ns);
-            Console.WriteLine(sr.ReadLine());
-        }
 
-        private void message1()
-        {
-            TcpClient tc = new TcpClient("127.0.0.1", 2000);
-            Console.WriteLine("Server invoked");
-            NetworkStream ns = tc.GetStream();
-            StreamWriter sw = new StreamWriter(ns);
-            sw.WriteLine("a");
-            sw.Flush();
-            //   sw.Close();
-            StreamReader sr = new StreamReader(ns);
-            Console.WriteLine(sr.ReadLine());
-        }
-
-        private void message2()
-        {
-            string returnData;
-            byte[] receiveBytes;
-            //ConsoleKeyInfo cki = new ConsoleKeyInfo();
-
-            using (UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 3800)))
-            {
-                IPEndPoint remoteIpEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 3800);
-                //   while (true)
-                {
-                    receiveBytes = udpClient.Receive(ref remoteIpEndPoint);
-                    returnData = Encoding.ASCII.GetString(receiveBytes);
-                    Console.WriteLine(returnData);
-                    udpClient.Close();
-
-                    //if(returnData.Equals("2"))
-                    {
-                        //  break;
-                    }
-                }
-            }
-        }
-
-
+       
         private string message3(string answer)
         {
             string returnData = "";
@@ -1897,7 +1873,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //UdpClient udpClient = new UdpClient("140.116.82.104", 8082);
 
             //run back end Q generation program on AWS cloud server
-            UdpClient udpClient = new UdpClient("54.244.174.89", 8082);
+            UdpClient udpClient = new UdpClient("54.201.204.180", 8082);
 
             //
             Byte[] sendBytes = Encoding.UTF8.GetBytes(answer);
