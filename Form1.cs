@@ -57,7 +57,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //show nonverbal chart 
             nonverbal_webBrowser.Navigate("http://54.191.185.244/linechart.html");//
                                                                                   ///////////////
-
+                                                                                 
+            
             //set the timer that go off every 0.5 sec to capture 9-facial AUs
             Video_Timer = new System.Timers.Timer(1000);
 
@@ -75,14 +76,16 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         {
             //Your Code Here
             //Console.WriteLine(axWindowsMediaPlayer1.Ctlcontrols.currentPositionString);
+            //determine how many ticks the ProgressBarStep will have
+            int ProgressBarStep =Convert.ToInt32(730.0 / Convert.ToDouble(axWindowsMediaPlayer1.Ctlcontrols.currentItem.duration.ToString()));
 
 
 
             //pictureBox1.Left += 6;
             newPosition = Convert.ToInt32(axWindowsMediaPlayer1.Ctlcontrols.currentPosition);
-            pictureBox1.Left += Convert.ToInt32(6.5*(newPosition-oldPosition));
+            pictureBox1.Left += ProgressBarStep * (newPosition-oldPosition);
             oldPosition = newPosition;
-         Console.WriteLine(pictureBox1.Left);
+            //Console.WriteLine(Convert.ToInt32(730.0 / Convert.ToDouble(axWindowsMediaPlayer1.Ctlcontrols.currentItem.duration.ToString())));
 
 
         }
@@ -182,8 +185,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             axWindowsMediaPlayer1.URL = videoSavePath + "/" + mostRecentVideo; 
             axWindowsMediaPlayer1.Ctlcontrols.play(); // activates the play button
                                                       //axWindowsMediaPlayer1.Ctlcontrols.stop(); // activates the stop button
-                                                      //start record user's facial AUs
+
+
+            
+            //start record user's facial AUs
             Video_Timer.Start();
+
             
         }
 
@@ -193,8 +200,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             {
                 //Your Code Here
                 Video_Timer.Stop();
-               
+                //Console.WriteLine(Convert.ToDouble(axWindowsMediaPlayer1.Ctlcontrols.currentItem.duration.ToString()));
 
+               
+                
 
             }
             if (e.newState == 3)//restart timer

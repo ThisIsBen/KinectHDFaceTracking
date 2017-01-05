@@ -154,6 +154,9 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         public MainWindow()
         {
 
+
+
+
             //init nonverbal recorder array
             for (int i = 0; i < nonverbalAryNum; i++)
             {
@@ -270,8 +273,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         {
             //if (smileave.Sum() != 0)
             //{
-            outfile2.WriteLine(smileave.Sum());
-            outfile2.Flush();
+            //outfile2.WriteLine(smileave.Sum());
+            //outfile2.Flush();
             //add nonverbal feature to nonverbalRecordOBJ array record per second
            
             nonverbalRecordOBJ[nonverbal_index].timeStamp = System.DateTime.Now.ToString("u");
@@ -290,6 +293,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //}
         }
 
+        
 
 
         private void GetSmileAUOnTimeEvent(Object source, System.Timers.ElapsedEventArgs e)
@@ -298,9 +302,13 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             SmileScore = "0";
             AUSmile = SmileScore + " 1:" + facialAU[0] + " 2:" + facialAU[1] + " 3:" + facialAU[2] + " 4:" + facialAU[3] + " 5:" + facialAU[4] +
                 " 6:" + facialAU[5] + " 7:" + facialAU[6] + " 8:" + facialAU[7]
-                + " 9:" + facialAU[8] + "\n";
-            outfile3.WriteLine(AUSmile);
-            outfile3.Flush();
+                + " 9:" + facialAU[8] ;
+            //append into facial9AUArray
+            facial9AUArray[facial9AUArray_Index] = AUSmile;
+            //increase facial9AUArray index
+            facial9AUArray_Index++;
+            //outfile3.WriteLine(AUSmile);
+            //outfile3.Flush();
         }
 
         public void Initializewindow()
@@ -738,13 +746,16 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         string[] facialAU = new string[9];
         string AUSmile, SmileScore;
 
+        //store 9AU per second
+        string[] facial9AUArray = new string[nonverbalAryNum];//size = 600 =>for 10 min interview
+        int facial9AUArray_Index = 0;
 
         double speakingrate = 0;
         String interview_state = "";
         //StreamWriter outfile1 = new StreamWriter("All_AU.txt");
         
-        StreamWriter outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
-        StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
+        //StreamWriter outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
+        //StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
 
         //for scroll down
 
@@ -874,7 +885,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //avoid mistook head tilt for smile 
                 //0.055
                 //可調下方的值已控制smile的偵測靈敏度
-                if (mundOffen5 < 0.03 && mundOffen6 < 0.5 && -0.1 < mundOffen18 && mundOffen18 < 0.1 && mundOffen19 >0.05 && mundOffen17<0)
+                //5:0.03   6: 0.5
+                if (mundOffen5 < 0.08 && mundOffen6 < 1 && -0.1 < mundOffen18 && mundOffen18 < 0.1 && mundOffen19 >0.05 && mundOffen17<0)
                 {
                     smile = "1";
                     smileave[threadtime] = 1;
@@ -977,6 +989,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             rec.Stroke = RedBrush;
 
             //系統和使用者對話內容對話框
+         
             qa = line.Split('\n');
             int flag1 = 0;
             for (int i = 0; i < qa.Length; i++)
@@ -1560,19 +1573,30 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 DirectoryInfo wavDIFO = new DirectoryInfo(wavFolderPath);
                 wavDIFO.Create();
                 */
+                //show Start Record Img to prompt user it's time to answer the question(use dispatcher to enable cross thread UI update)
+                Dispatcher.BeginInvoke(new Action(showStartRecordImg),DispatcherPriority.Normal);
+                
 
                 //call record program
                 Process cmd1 = new Process();
                 cmd1.StartInfo.FileName = "python";
                 cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
+                
+                cmd1.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                cmd1.StartInfo.CreateNoWindow = true;
                 cmd1.Start(); 
                 cmd1.WaitForExit();
-                //call asr
+
+                //hide Start Record Img to prompt user recording has come to an end(use dispatcher to enable cross thread UI update)
+                Dispatcher.BeginInvoke(new Action(hideStartRecordImg), DispatcherPriority.Normal);
+                
 
                 //speech to text and store text in speech_to_text.txt
                 Process cmd2 = new Process();
                 cmd2.StartInfo.FileName = "python";
                 cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
+                cmd2.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                cmd2.StartInfo.CreateNoWindow = true;
                 cmd2.Start();
 
 
@@ -1689,10 +1713,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
             // stop the nonverbal timer
             nonverbal_Timer.Stop();
-            outfile2.Close();
+            //outfile2.Close();
             // stop the facialAU timer
             facialAU_Timer.Stop();
-            outfile3.Close();
+            //write facial9AUArray to file
+            store9AU_2_file(facial9AUArray);
+            //outfile3.Close();
             //System.Threading.Thread.Sleep(1800);
 
             //begin send nonverbal feature to AWS back end :"54.191.185.244", 8084
@@ -1720,10 +1746,38 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 }
             }
             */
-            outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
-            outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
+            //outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
+            //outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
         }
 
+        //show recording img 
+        public void showStartRecordImg()
+        {
+            recordImage.Visibility = Visibility.Visible;
+        }
+
+        //hide recording img
+        public void hideStartRecordImg()
+        {
+            recordImage.Visibility = Visibility.Collapsed;
+        }
+
+        //store 9AU to file 
+        public void store9AU_2_file(string[] myArray)
+        {
+            //store to data
+            System.IO.StreamWriter streamWriter = new System.IO.StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
+            string output = "";
+            int notNullAmount = myArray.Count(s => s != null);
+            for (int i = 0; i < notNullAmount; i++)
+            {
+
+                output += myArray[i].ToString();
+                streamWriter.WriteLine(output);
+                output = "";
+            }
+            streamWriter.Close();
+        }
         public static bool IsFileReady(String sFilename)
         {
             // If the file can be opened for exclusive access it means that the file
@@ -1793,6 +1847,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             return true;
         }
 
+        //send nonverbalRecord in the form of json to backend(array->json)
         public void sendNonverbalRecord()
         {
 
@@ -1819,7 +1874,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
          }
-
+        
+        //open the SmileTestFile and send the content to backend
         public void sendSmileTestFile()
         {
             
