@@ -58,9 +58,9 @@
             <Rectangle Stroke="#FFFFFF5C" Margin="15,29,168,782"/>
             <TextBlock TextWrapping="Wrap" Text="Dialogue Content" FontSize="16" FontWeight="Bold" Margin="23,0,261,493" Background="#FFC5F7FF" Height="26" VerticalAlignment="Bottom"/>
             <TextBlock TextWrapping="Wrap" Text="Control" FontSize="16" FontWeight="Bold" Background="#FFFBF5B6" Margin="23,19,337,834" RenderTransformOrigin="-1.134,-1.333"/>
-            <Slider Name="speakrate" HorizontalAlignment="Left" Margin="78,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="275"/>
+            <Slider Name="speakrate" HorizontalAlignment="Left" Margin="78,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Width="275" Visibility="Collapsed"/>
             <!--TextBlock Name="test" HorizontalAlignment="Left" Margin="288,53,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/-->
-            <Button Content="Relevant Score" HorizontalAlignment="Left" Margin="281,53,0,0" VerticalAlignment="Top" Width="106" Click="Button_Click_2" Height="24"/>
+            <Button Content="Relevant Score" HorizontalAlignment="Left" Margin="281,53,0,0" VerticalAlignment="Top" Width="106" Click="Button_Click_2" Height="24" />
             <!--GridSplitter Height="100" Margin="0,218,417,0" VerticalAlignment="Top" Width="5"/-->
         </Grid>
         <Image Source="E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/Images/record.png" Visibility="Collapsed" Name="recordImage" HorizontalAlignment="Left" Height="160" Margin="228,241,-387,0" VerticalAlignment="Top" Width="160" Grid.Column="1"/>

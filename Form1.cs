@@ -53,7 +53,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
            
                
 
-            rele();
+            //rele();
             //show nonverbal chart 
             nonverbal_webBrowser.Navigate("http://54.191.185.244/linechart.html");//
                                                                                   ///////////////
@@ -182,7 +182,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private void axWindowsMediaPlayer1_ClickEvent(object sender, AxWMPLib._WMPOCXEvents_ClickEvent e)
         {
 
-            axWindowsMediaPlayer1.URL = videoSavePath + "/" + mostRecentVideo; 
+            axWindowsMediaPlayer1.URL = videoSavePath + "/" + mostRecentVideo;
+            //axWindowsMediaPlayer1.URL = "C:/Users/Ben/Videos/ice_video_20170105-212048.webm";
             axWindowsMediaPlayer1.Ctlcontrols.play(); // activates the play button
                                                       //axWindowsMediaPlayer1.Ctlcontrols.stop(); // activates the stop button
 
