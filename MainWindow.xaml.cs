@@ -147,8 +147,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         /// 
-        ///////////////////////////////888888888888888888//////////////////////////////////////////////////
-        //public int ElevationAngle { get; set; }
+     
 
         ////////////////////////////////888888888888888/////////////////////
         public MainWindow()
@@ -198,15 +197,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
 
-            ////8888888888888888888888888888888888888888
-
-            //this.sensor.ElevationAngle = 0;
-
-
-
-
-
-            ///888888888888888888888888888888888888888888
+         
             // get the color frame details
             FrameDescription frameDescription = this.sensor.ColorFrameSource.FrameDescription;
 
@@ -777,9 +768,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             BitmapImage smilechart = new BitmapImage(new Uri(chartPath + "smile.png"));
             BitmapImage nodchart = new BitmapImage(new Uri(chartPath + "nod.png"));
             BitmapImage volumechart = new BitmapImage(new Uri(chartPath + "volume.png"));
+            /*hide slow and fast icon
             BitmapImage speakingratechart = new BitmapImage(new Uri(chartPath + "slow.png"));
             BitmapImage speakingratechart1 = new BitmapImage(new Uri(chartPath + "fast.png"));
-
+            */
             //介面顏色設定
             SolidColorBrush RedBrush = new SolidColorBrush();
             RedBrush.Color = Colors.Red;
@@ -886,7 +878,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //0.055
                 //可調下方的值已控制smile的偵測靈敏度
                 //5:0.03   6: 0.5
-                if (mundOffen5 < 0.08 && mundOffen6 < 1 && -0.1 < mundOffen18 && mundOffen18 < 0.1 && mundOffen19 >0.05 && mundOffen17<0)
+                if (mundOffen5 < 1 && mundOffen6 < 1 && -0.1 < mundOffen18 && mundOffen18 < 0.1 && mundOffen19 >0.03 && mundOffen17<0)
                 {
                     smile = "1";
                     smileave[threadtime] = 1;
@@ -960,28 +952,29 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             diaask[3].Height = 40;
             Canvas.SetLeft(diaask[3], 15);
             Canvas.SetTop(diaask[3], 150);
-
+            /*hide slow and fast icon
             diaask[4] = new Image();
             diaask[4].Source = speakingratechart;
             diaask[4].Width = 40;
             diaask[4].Height = 40;
             Canvas.SetLeft(diaask[4], 15);
             Canvas.SetTop(diaask[4], 190);
-
+            
             diaask[5] = new Image();
             diaask[5].Source = speakingratechart1;
             diaask[5].Width = 40;
             diaask[5].Height = 30;
             Canvas.SetLeft(diaask[5], 340);
             Canvas.SetTop(diaask[5], 195);
-
+            */
             canvas1.Children.Add(diaask[0]);
             canvas1.Children.Add(diaask[1]);
             canvas1.Children.Add(diaask[2]);
             canvas1.Children.Add(diaask[3]);
+            /*hide slow and fast icon
             canvas1.Children.Add(diaask[4]);
             canvas1.Children.Add(diaask[5]);
-
+            */
             Rectangle rec = new Rectangle();
             rec.Height = 75;
             rec.Width = 75;
@@ -1191,7 +1184,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //adjust the x position of face capturing square position
                 Canvas.SetLeft(rec, point.X / 1.5); //123456789  1.5   2.5
                 //adjust the y position of face capturing square position
-                Canvas.SetTop(rec, point.Y / 5.5);
+                Canvas.SetTop(rec, point.Y / 5.0);
             }
             canvas2.Children.Add(rec);
 
@@ -1321,20 +1314,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            /* 原本為錄影程式  但是現在沒用到所以先註解掉  因為一但開啟可能會停不掉
-             * Process videocmd = new Process();
-               videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
-               videocmd.Start();*/
-
-            //開啟錄音程式
-            /*
-            Process cmd = new Process();
-            cmd.StartInfo.FileName = "java.exe";
-            cmd.StartInfo.Arguments = "-jar E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.jar";
-            cmd.StartInfo.CreateNoWindow = true;
-            cmd.Start();
-            */
-
+            
             buttonclick = 1;
         }
 
@@ -1433,13 +1413,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
        
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            /* Process videocmd = new Process();
-             videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
-             videocmd.Start();*/
-            /* Process cmd0 = new Process();
-             cmd0.StartInfo.FileName = "java.exe";
-             cmd0.StartInfo.Arguments = "-jar D:/record/voicerecord_3/recordall.jar";
-             cmd0.Start();*/
+            
             //開啟面試對話函式
             oThread = new Thread(new ThreadStart(work));
             //  Camerathread = new Thread(new ThreadStart(Camera));
@@ -1472,10 +1446,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
 
-            //start video recorder
-            //videoRecorder.startRecording();
-
-
+           
 
 
 
@@ -1489,9 +1460,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
 
-            /* Process videocmd = new Process();
-             videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
-             videocmd.Start();*/
             buttonclick = 1;
             double[] mouthopentime = new double[3];
             String[,] question = new String[6, 6];
@@ -1500,36 +1468,28 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //int speaktime = 0;
             string nextquestion = "你好,";
             Random qnumber = new Random();
-            int ran = 0;
+            
             //記錄所有qa，並在UpdateMesh()去讀取，然後再印在對話框
             StreamWriter qa = new StreamWriter("allQA.txt");
-            //StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speech_to_text.txt");
-
-
-            /*  StreamReader ques = new StreamReader("/question/1.txt", System.Text.Encoding.Default);
-              question[0,0] = ques.ReadLine();
-              ques.Close();*/
-
-            /*  question[0,0] = "請自我介紹";
-              question[1,0] = "為什麼你要報考這個科系";
-              question[2,0] = "你在大學最拿手的科目是什麼";
-              question[3,0] = "你未來的期望是什麼";
-              question[4,0] = "你常做什麼運動";*/
+           
             question[5, 0] = "面試到此結束";
             nextquestion = message3("start");
-            //set up speech to text .txt 's reader
-            //System.IO.StreamReader speech2textReader = new System.IO.StreamReader("speech_to_text.txt");
+           
 
 
+            //use cmd to call record program
+            Process cmd1 = new Process();
+            Process cmd2 = new Process();
             for (int i = 0; i < 12; i++)
             {
+                /*
                 FileStream fs = new FileStream("name.txt", FileMode.Create);
                 StreamWriter sw = new StreamWriter(fs);
                 sw.Write(i);
                 sw.Flush();
                 sw.Close();
                 fs.Close();
-
+                */
                 if (i < 10)
                 {
                     //nextquestion 
@@ -1546,39 +1506,16 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     //speaktime = question[i].Length*300
                     Thread.Sleep(nextquestion.Split(';')[0].Length * 350);
                     sitepal = null;
-                    /*  Process videoclose = new Process();
-                      videoclose.StartInfo.FileName = "cmd.exe";
-                      videoclose.StartInfo.Arguments = "/k taskkill /f /im ColorBasics-WPF.exe";
-                      videoclose.Start();*/
+                   
                     break;
                 }
-                // Thread.Sleep(1000); 
-                /*java recording program
-                 Process cmd = new Process();
-                 cmd.StartInfo.FileName = "java.exe";
-                 cmd.StartInfo.Arguments = "-jar D:/record/voicerecord_3/record.jar";
-                 cmd.Start();
-                 */
-
-                //11/4 the following code's function has been replace by python recording and speech to text program
-                /*
-                interview_state = i + "_1";
-                string strFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/wave" + i.ToString() + "/";
-                if (Directory.Exists(strFolderPath))
-                {
-                    DirectoryInfo DIFO = new DirectoryInfo(strFolderPath);
-                    DIFO.Delete(true);
-                }
-                string wavFolderPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/waveA" + i.ToString() + "/";
-                DirectoryInfo wavDIFO = new DirectoryInfo(wavFolderPath);
-                wavDIFO.Create();
-                */
+                
                 //show Start Record Img to prompt user it's time to answer the question(use dispatcher to enable cross thread UI update)
                 Dispatcher.BeginInvoke(new Action(showStartRecordImg),DispatcherPriority.Normal);
                 
 
                 //call record program
-                Process cmd1 = new Process();
+                
                 cmd1.StartInfo.FileName = "python";
                 cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
                 
@@ -1592,7 +1529,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 
 
                 //speech to text and store text in speech_to_text.txt
-                Process cmd2 = new Process();
+               
                 cmd2.StartInfo.FileName = "python";
                 cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
                 cmd2.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -1607,49 +1544,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 // 取得資料夾內所有檔案
 
                 string text = "";
-                /*
-               if (Directory.Exists(folderName))
-               {
-                   int filenum = 0;
-                   foreach (string fname in Directory.GetFiles(folderName, "*.txt"))
-                   {
-                       string line1;
-                       // 一次讀取一行
-                       System.IO.StreamReader file = new System.IO.StreamReader(fname);
-                       line1 = file.ReadToEnd();
-                       if (filenum == (Directory.GetFiles(folderName, "*.txt").Length - 1) && !line1.Split('\n')[0].Equals(""))
-                       {
-                           text += line1.Split('\n')[0];
-                       }
-                       else if (!line1.Split('\n')[0].Equals(""))
-                       {
-                           text += line1.Split('\n')[0] + ",";
-                       }
-
-                       file.Close();
-                       WaveFileReader reader = new WaveFileReader(fname.Replace(".txt", ""));
-                       TimeSpan duration = reader.TotalTime;
-                       double length = duration.TotalMilliseconds;
-                       speakingrate = duration.TotalMilliseconds / text.Length;
-                       filenum++;
-                   }
-               }
-                */
+                
 
 
-                ///11/1
-                ////*
-                /*
-                try
-                {
-                */
-
-                // Your processing code here  
-                //text = File.ReadAllLines("speech_to_text.txt")[0];
-                //wait 1.8 second for python speechtotext program to write text to file.
-                //但speech_to_text.txt的內容都沒更新!!solved
-                //但speech_to_text.txt可事先不存在也可以囉!
-               
+                
 
                 //wait until the file is released by writting process
                 Thread.Sleep(2800);
@@ -1657,38 +1555,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 
                 text = File.ReadAllLines("speech_to_text.txt")[0];
 
-                /*
-                }
-                */
-                /*
-                catch (IndexOutOfRangeException e)
-                {
-
-
-                        cmd1.StartInfo.FileName = "python";
-                        cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
-                        cmd1.Start();
-                        cmd1.WaitForExit();
-
-                        cmd2.StartInfo.FileName = "python";
-                        cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
-                        cmd2.Start();
-
-                        text = File.ReadAllLines("speech_to_text.txt")[0];
-                        //StreamReader reader = new StreamReader("speech_to_text.txt");
-                        //text = reader.ReadLine();
-
-
-                }
-                */
-
-
-                //Console.Read();
-
-
-                //若錄音城市不成功就用下方此方式輸入你要說的回答句
-                //string text = "你;好;你好\n";
-                //text = "你;好;你好\n";
+                
                 string ckip = text;
 
                 line += "System:" + nextquestion.Split(';')[1].Replace("\n", "") + "\n" + "User:" + ckip.Replace("\n", "") + "\n";
@@ -1891,12 +1758,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
             file.Close();
 
-            //Console.Write(facialAUPackage);
-
-            //JSonHelper helper0 = new JSonHelper();
-
-            //Console.WriteLine("jsonResult Converter test" + jsonResult);
-
+            
             
             //tcp to send json to back end
             TcpClient tcpclnt = new TcpClient();
@@ -1952,12 +1814,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
                 returnData = Encoding.UTF8.GetString(receiveBytes);
 
-                /* Console.WriteLine("This is the message you received " +
-                                             returnData.ToString());
-                 Console.WriteLine("This message was sent from " +
-                                             RemoteIpEndPoint.Address.ToString() +
-                                             " on their port number " +
-                                             RemoteIpEndPoint.Port.ToString());*/
+               
             }
             catch (Exception e)
             {
@@ -1967,6 +1824,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             return returnData;
         }
 
+        
         static string seg(String answer)
         {
             string[] strDic = new StreamReader("GigaWord_Dic.txt", Encoding.Default).ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -2022,23 +1880,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             a.Show();
             //return;
         }
-        /*
-        private void close_Click(object sender, RoutedEventArgs e)
-        {
-            if(right.Content.ToString() == "close all")
-            {
-                mainwindow.Width = 850;
-                right.Content = "open all";
-            }
-            else if(right.Content.ToString() == "open all")
-            {
-                face.Visibility = Visibility.Visible;
-                canvas2.Visibility = Visibility.Visible;
-                canvas1.Visibility = Visibility.Visible;
-                mainwindow.Width = 1275;
-                right.Content = "close all";
-            }
-        }*/
+        
 
     }
 }
