@@ -51,7 +51,7 @@
             <Rectangle Stroke="#FFFFFBAF" Margin="23,170,25,663" Height="41"/>
             <Rectangle Stroke="#FFFFFBAF" Margin="23,211,25,622" Height="41"/>
             <Rectangle Stroke="#FFFFFBAF" Margin="23,252,25,581" Height="41"/>
-            <Rectangle Stroke="#FFFFFBAF" Margin="23,293,25,540" Height="41"/>
+            <Rectangle Visibility="Collapsed" Stroke="#FFFFFBAF" Margin="23,293,25,540" Height="41"/>
             <Rectangle Stroke="#FFFFAFAF" Margin="15,112,15,532"/>
             <TextBlock TextWrapping="Wrap" Text="Real-time Feedback" FontSize="16" FontWeight="Bold" Margin="23,103,242,750" Background="#FFFDDDD0"/>
             <Rectangle Stroke="#FF25ECF5" Margin="15,366,15,265"/>
@@ -63,6 +63,6 @@
             <Button Content="Relevant Score" HorizontalAlignment="Left" Margin="281,53,0,0" VerticalAlignment="Top" Width="106" Click="Button_Click_2" Height="24" />
             <!--GridSplitter Height="100" Margin="0,218,417,0" VerticalAlignment="Top" Width="5"/-->
         </Grid>
-        <Image Source="E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/Images/record.png" Visibility="Collapsed" Name="recordImage" HorizontalAlignment="Left" Height="160" Margin="228,241,-387,0" VerticalAlignment="Top" Width="160" Grid.Column="1"/>
+        <Image  Visibility="Collapsed" Name="recordImage" HorizontalAlignment="Left" Height="160" Margin="228,241,-387,0" VerticalAlignment="Top" Width="160" Grid.Column="1"/>
     </Grid>
 </Window>

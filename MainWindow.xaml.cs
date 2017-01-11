@@ -27,23 +27,10 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
     using System.Linq;
     using System.Net;
     using System.Text;
-    using NAudio.Wave;
 
 
     ///888888888888888888888
-
-
-    using System.Windows.Data;
-
-    using System.Windows.Input;
-    using System.Windows.Markup;
-
-    using System.Windows.Navigation;
-    using System.Collections;
-
-
-
-    //OBJ->JSON converter
+ //OBJ->JSON converter
     using System.Runtime.Serialization.Json;
 
 
@@ -72,6 +59,11 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
 
+
+
+
+
+
     /// 8888888888888888888
 
     /// <summary>
@@ -83,19 +75,15 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         /// 
 
 
+        //set up nonverbal record OBJ array to store nonverbal feature as long as 20 minutes with unit:sec
+        const int nonverbalAryNum = 600;//for 10 mins interview
+        nonverbalRecord[] nonverbalRecordOBJ = new nonverbalRecord[nonverbalAryNum];
+        //this indicate nonverbalRecord array's index
+        int nonverbal_index = 0;
         //set up a timer to get nonverbal data per second
         private static System.Timers.Timer nonverbal_Timer;
 
-        //set up a timer to get 9 facial AUs per 0.5 sec
-        private static System.Timers.Timer facialAU_Timer;
 
-
-        //set up nonverbal record OBJ array to store nonverbal feature as long as 20 minutes with unit:sec
-        const int nonverbalAryNum=600;//for 10 mins interview
-        nonverbalRecord[] nonverbalRecordOBJ = new nonverbalRecord[nonverbalAryNum];
-       
-        //this indicate nonverbalRecord array's index
-        int nonverbal_index = 0;
 
         /// </summary>
 
@@ -142,46 +130,22 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private FaceFrameReader[] faceFrameReaders = null;
         private FaceFrameResult[] faceFrameResults = null;
 
-       
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
         /// 
-     
+        ///////////////////////////////888888888888888888//////////////////////////////////////////////////
+        //public int ElevationAngle { get; set; }
 
         ////////////////////////////////888888888888888/////////////////////
         public MainWindow()
         {
 
 
-
-
-            //init nonverbal recorder array
-            for (int i = 0; i < nonverbalAryNum; i++)
-            {
-                nonverbalRecordOBJ[i] = new nonverbalRecord();
-                
-                nonverbalRecordOBJ[i].timeStamp = "-";
-                nonverbalRecordOBJ[i].smileIntensity = -1;
-                nonverbalRecordOBJ[i].nodIntensity = -1;
-                nonverbalRecordOBJ[i].eyeContactIntensity = -1;
-                //indicate the beginning of the interview
-                nonverbalRecordOBJ[i].begin_end = "-";
-                
-            }
-            //////////////////////////////////
             
 
-
-
-
-
-
-
-
-
             ////////////////////////////////////////
-
 
             //clear up speech_to_text.txt
             //System.IO.File.WriteAllText(@"speech_to_text.txt", string.Empty);
@@ -197,7 +161,15 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
 
-         
+            ////8888888888888888888888888888888888888888
+
+            //this.sensor.ElevationAngle = 0;
+
+
+
+
+
+            ///888888888888888888888888888888888888888888
             // get the color frame details
             FrameDescription frameDescription = this.sensor.ColorFrameSource.FrameDescription;
 
@@ -259,52 +231,55 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
 
         }
-        private  void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
 
         {
             //if (smileave.Sum() != 0)
             //{
             //outfile2.WriteLine(smileave.Sum());
             //outfile2.Flush();
-            //add nonverbal feature to nonverbalRecordOBJ array record per second
-           
+
+
+            //add nonverbal feature to nonverbalRecordOBJ array record per second    
             nonverbalRecordOBJ[nonverbal_index].timeStamp = System.DateTime.Now.ToString("u");
             nonverbalRecordOBJ[nonverbal_index].smileIntensity = smileave.Sum();
             nonverbalRecordOBJ[nonverbal_index].nodIntensity = nodave.Sum();
             nonverbalRecordOBJ[nonverbal_index].eyeContactIntensity = eyeave.Sum();
-            //indicate the beginning of the interview
-            if (nonverbal_index == 0)
-                nonverbalRecordOBJ[nonverbal_index].begin_end = "begin";
-            else
-                nonverbalRecordOBJ[nonverbal_index].begin_end = "-";
+           
             //increment index
             nonverbal_index++;
 
-            //Console.WriteLine("hi ben!");
-            //}
-        }
 
-        
-
-
-        private void GetSmileAUOnTimeEvent(Object source, System.Timers.ElapsedEventArgs e)
-
-        {
+            //get 9 AU features per second.
+            
+            //adjust 9AU feature data to the format required by SVM 
             SmileScore = "0";
             AUSmile = SmileScore + " 1:" + facialAU[0] + " 2:" + facialAU[1] + " 3:" + facialAU[2] + " 4:" + facialAU[3] + " 5:" + facialAU[4] +
                 " 6:" + facialAU[5] + " 7:" + facialAU[6] + " 8:" + facialAU[7]
-                + " 9:" + facialAU[8] ;
+                + " 9:" + facialAU[8];
+
             //append into facial9AUArray
-            facial9AUArray[facial9AUArray_Index] = AUSmile;
+            facial9AU.facial9AUArray[facial9AU.getFacial9AUArray_Index()] = AUSmile;
             //increase facial9AUArray index
-            facial9AUArray_Index++;
-            //outfile3.WriteLine(AUSmile);
-            //outfile3.Flush();
+            facial9AU.increaseFacial9AUArray_Index();
+
+
+            ///end
         }
+
 
         public void Initializewindow()
         {
-            
+            //init nonverbal recorder array
+            nonverbalRecord.initNonverbalRecordOBJ(nonverbalRecordOBJ, nonverbalAryNum);
+            //init facial9AU recorder array
+            facial9AU.initSmileForSVMArray(nonverbalAryNum);
+            //capture smile value per second
+            nonverbal_Timer = new System.Timers.Timer(1000);
+            nonverbal_Timer.Elapsed += OnTimedEvent;
+
+
+            //init frontend user interface
             SolidColorBrush transBrush = new SolidColorBrush();
             transBrush.Color = Colors.Transparent;
 
@@ -370,8 +345,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //3D人物
-            
-            web1.Navigate("http://localhost/3d.htm");// http://localhost/iisstart.htm
+            web1.Navigate("http://localhost/3d.htm");
             for (int i = 0; i < this.bodyCount; i++)
             {
                 if (this.faceFrameReaders[i] != null)
@@ -381,8 +355,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 }
             }
 
-
-            
 
         }
 
@@ -738,40 +710,64 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         string AUSmile, SmileScore;
 
         //store 9AU per second
-        string[] facial9AUArray = new string[nonverbalAryNum];//size = 600 =>for 10 min interview
-        int facial9AUArray_Index = 0;
+        smileForSVM facial9AU = new smileForSVM();
+       
 
         double speakingrate = 0;
         String interview_state = "";
-        //StreamWriter outfile1 = new StreamWriter("All_AU.txt");
+        //StreamWriter outfile1 = new StreamWriter("AllTxtFiles1.txt");
+        // StreamWriter outfile2 = new StreamWriter("smile_intensity.txt");
+
+
+
+
+        //keep the needed face AU for detecting smile captured by Kinect
+        float mundOffen0 = 0;
+        float mundOffen2 = 0;
+        float mundOffen4 = 0;
+        float mundOffen5 = 0;
+        float mundOffen6 = 0;
+        float mundOffen10 = 0;
+        float mundOffen11 = 0;
+        float mundOffen14 = 0;
+        float mundOffen16 = 0;
+        float mundOffen17 = 0;
+        float mundOffen18 = 0;
+        float mundOffen19 = 0;
+       
+        String summary = "";
+        String smile = "", nod = "", eye = "", volume = "";
+
+        //icon picture folder path
+        string chartPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/Images/";
+        Image[] diaask = new Image[4];
+        //錄音圖片
         
-        //StreamWriter outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
-        //StreamWriter outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
-
-        //for scroll down
-
-
-
         private void UpdateMesh()
         {
-            MediaElement mysound = new MediaElement();
             richTextBox1.Document.Blocks.Clear();
-            String[] questext = new String[5];
-            String[] anstext = new String[5];
-            String summary = "";
-            String smile = "", nod = "", eye = "", volume = "";
+            richTextBox1.ScrollToEnd();
+            MediaElement mysound = new MediaElement();
 
-            //按鈕圖片
-            string chartPath = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/Images/";
-            Image[] diaask = new Image[10];
+
+
+
+
+            //錄音圖片
+            BitmapImage recordLogo = new BitmapImage();
+            recordLogo.BeginInit();
+            recordLogo.UriSource = new Uri(chartPath + "record.png");
+            recordLogo.EndInit();
+            recordImage.Source = recordLogo;
+
+            
             BitmapImage eyechart = new BitmapImage(new Uri(chartPath + "eye.png"));
             BitmapImage smilechart = new BitmapImage(new Uri(chartPath + "smile.png"));
             BitmapImage nodchart = new BitmapImage(new Uri(chartPath + "nod.png"));
             BitmapImage volumechart = new BitmapImage(new Uri(chartPath + "volume.png"));
-            /*hide slow and fast icon
-            BitmapImage speakingratechart = new BitmapImage(new Uri(chartPath + "slow.png"));
-            BitmapImage speakingratechart1 = new BitmapImage(new Uri(chartPath + "fast.png"));
-            */
+            //BitmapImage speakingratechart = new BitmapImage(new Uri(chartPath + "slow.png"));
+            //BitmapImage speakingratechart1 = new BitmapImage(new Uri(chartPath + "fast.png"));
+
             //介面顏色設定
             SolidColorBrush RedBrush = new SolidColorBrush();
             RedBrush.Color = Colors.Red;
@@ -807,43 +803,29 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             }
 
             //抓取使用者AU
-            var vertices = this.currentFaceModel.CalculateVerticesForAlignment(this.currentFaceAlignment);
-            float mundOffen0 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.JawOpen];
-            float mundOffen1 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.JawSlideRight];
-            float mundOffen2 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LeftcheekPuff];
-            float mundOffen3 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LefteyebrowLowerer];
-            float mundOffen4 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LefteyeClosed];
-            float mundOffen5 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerDepressorLeft];
-            float mundOffen6 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerDepressorRight];
-            float mundOffen7 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerPullerLeft];
-            float mundOffen8 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerPullerRight];
-            float mundOffen9 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipPucker];
-            float mundOffen10 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipStretcherLeft];
-            float mundOffen11 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipStretcherRight];
-            float mundOffen12 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LowerlipDepressorLeft];
-            float mundOffen13 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LowerlipDepressorRight];
-            float mundOffen14 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RightcheekPuff];
-            float mundOffen15 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RighteyebrowLowerer];
-            float mundOffen16 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RighteyeClosed];
-            float mundOffen17 = currentFaceAlignment.FaceOrientation.X;
-            float mundOffen18 = currentFaceAlignment.FaceOrientation.Z;
-            float mundOffen19 = currentFaceAlignment.FaceOrientation.Y;
+             var vertices = this.currentFaceModel.CalculateVerticesForAlignment(this.currentFaceAlignment);
+             mundOffen0 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.JawOpen];
+            //float mundOffen1 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.JawSlideRight];
+             mundOffen2 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LeftcheekPuff];
+            //float mundOffen3 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LefteyebrowLowerer];
+             mundOffen4 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LefteyeClosed];
+             mundOffen5 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerDepressorLeft];
+             mundOffen6 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerDepressorRight];
+            //float mundOffen7 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerPullerLeft];
+            //float mundOffen8 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipCornerPullerRight];
+            //float mundOffen9 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipPucker];
+             mundOffen10 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipStretcherLeft];
+             mundOffen11 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LipStretcherRight];
+            //float mundOffen12 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LowerlipDepressorLeft];
+            //float mundOffen13 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.LowerlipDepressorRight];
+             mundOffen14 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RightcheekPuff];
+            //float mundOffen15 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RighteyebrowLowerer];
+             mundOffen16 = currentFaceAlignment.AnimationUnits[FaceShapeAnimations.RighteyeClosed];
+             mundOffen17 = currentFaceAlignment.FaceOrientation.X;
+             mundOffen18 = currentFaceAlignment.FaceOrientation.Z;
+             mundOffen19 = currentFaceAlignment.FaceOrientation.Y;
 
-            String AU, AU1 ;
-            
-            //AU所輸出的值
-            AU = mundOffen0.ToString();
-            /*
-            AU1 = "JawOpen " + mundOffen0.ToString() + " JawSlideRight " + mundOffen1.ToString() + " LeftcheekPuff " + mundOffen2.ToString() + " LefteyebrowLowerer " + mundOffen3.ToString() + " LefteyeClosed " + mundOffen4.ToString()
-                + " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + " LipCornerPullerLeft " + mundOffen7.ToString() + " LipCornerPullerRight " + mundOffen8.ToString()
-                 + " LipPucker " + mundOffen9.ToString() + " LipStretcherLeft " + mundOffen10.ToString() + " LipStretcherRight " + mundOffen11.ToString() + " LowerlipDepressorLeft " + mundOffen12.ToString() + " LowerlipDepressorRight " + mundOffen13.ToString()
-                 + " RightcheekPuff " + mundOffen14.ToString() + " RighteyebrowLowerer " + mundOffen15.ToString() + " RighteyeClosed " + mundOffen16.ToString() + " Nod " + mundOffen17.ToString() + " Tilt " + mundOffen18.ToString() + " Yaw " + mundOffen19.ToString();
-            
-            
-            outfile1.WriteLine(AU1);
-            outfile1.Flush();
-            */
-            
+
 
             //store the current 9 facial AUs in an array
             facialAU[0] = mundOffen5.ToString();//shrink its impact
@@ -855,19 +837,28 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             facialAU[6] = mundOffen14.ToString();
             facialAU[7] = mundOffen4.ToString();
             facialAU[8] = mundOffen16.ToString();
+            /*
+            String AU, AU1;
+            //AU所輸出的值
+            AU1 = "JawOpen " + mundOffen0.ToString() + " JawSlideRight " + mundOffen1.ToString() + " LeftcheekPuff " + mundOffen2.ToString() + " LefteyebrowLowerer " + mundOffen3.ToString() + " LefteyeClosed " + mundOffen4.ToString()
+                + " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString() + " LipCornerPullerLeft " + mundOffen7.ToString() + " LipCornerPullerRight " + mundOffen8.ToString()
+                 + " LipPucker " + mundOffen9.ToString() + " LipStretcherLeft " + mundOffen10.ToString() + " LipStretcherRight " + mundOffen11.ToString() + " LowerlipDepressorLeft " + mundOffen12.ToString() + " LowerlipDepressorRight " + mundOffen13.ToString()
+                 + " RightcheekPuff " + mundOffen14.ToString() + " RighteyebrowLowerer " + mundOffen15.ToString() + " RighteyeClosed " + mundOffen16.ToString() + " Nod " + mundOffen17.ToString() + " Tilt " + mundOffen18.ToString();
+            AU = mundOffen0.ToString();
+            //
+            outfile1.WriteLine(AU1);
+            outfile1.Flush();
+            // Console.WriteLine(AU1);
+            // Console.WriteLine(AU);
+            //
 
-
-
-
-           
-            //end get smile feature to file
-
-            //mouthopen = mundOffen0;
+            mouthopen = mundOffen0;
+            */
             //len.Text = mundOffen17.ToString();
 
             //test.Text = mundOffen5.ToString();
             // smile = " LipCornerDepressorLeft " + mundOffen5.ToString() + " LipCornerDepressorRight " + mundOffen6.ToString();
-            if (buttonclick == 1)
+            //  if (buttonclick == 1)
             {
                 //辨識微笑、點頭.....並且記錄每個frame有沒有這些動作
                 //可調下方的值已控制微笑的偵測靈敏度
@@ -875,11 +866,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 //if (mundOffen5 < 0.23 && mundOffen6 < 0.23)
                 //if (mundOffen5 < 0.35 && mundOffen6 < 0.35)
                 //avoid mistook head tilt for smile 
-                //0.055
-                //可調下方的值已控制smile的偵測靈敏度
-                //5:0.03   6: 0.5
-                if (mundOffen5 < 1 && mundOffen6 < 1 && -0.1 < mundOffen18 && mundOffen18 < 0.1 && mundOffen19 >0.03 && mundOffen17<0)
-                {
+                if (mundOffen5 < 0.055 && mundOffen6 < 0.055 && -0.1 < mundOffen18 && mundOffen18 < 0.1)
+                { 
                     smile = "1";
                     smileave[threadtime] = 1;
                 }
@@ -888,9 +876,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     smileave[threadtime] = 0;
                     smile = "0";
                 }
-                
                 //可調下方的值已控制nod的偵測靈敏度
-                if (mundOffen17 >0.01)//0.006
+                if (mundOffen17 > 0.01)//0.006 && mundOffen19 > -0.03
                 {
                     //len.Text = mundOffen17.ToString();
                     nodave[threadtime] = 1;
@@ -918,7 +905,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                 volume = db.ToString();
             }
 
-            
+            /* outfile1.Write(AU1);
+             outfile1.Close();*/
 
             canvas1.Children.Clear();
             canvas2.Children.Clear();
@@ -952,14 +940,14 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             diaask[3].Height = 40;
             Canvas.SetLeft(diaask[3], 15);
             Canvas.SetTop(diaask[3], 150);
-            /*hide slow and fast icon
+            /*hide speaking rate slow and fast icon
             diaask[4] = new Image();
             diaask[4].Source = speakingratechart;
             diaask[4].Width = 40;
             diaask[4].Height = 40;
             Canvas.SetLeft(diaask[4], 15);
             Canvas.SetTop(diaask[4], 190);
-            
+
             diaask[5] = new Image();
             diaask[5].Source = speakingratechart1;
             diaask[5].Width = 40;
@@ -971,7 +959,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             canvas1.Children.Add(diaask[1]);
             canvas1.Children.Add(diaask[2]);
             canvas1.Children.Add(diaask[3]);
-            /*hide slow and fast icon
+            /*hide speaking rate slow and fast icon
             canvas1.Children.Add(diaask[4]);
             canvas1.Children.Add(diaask[5]);
             */
@@ -982,7 +970,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             rec.Stroke = RedBrush;
 
             //系統和使用者對話內容對話框
-         
             qa = line.Split('\n');
             int flag1 = 0;
             for (int i = 0; i < qa.Length; i++)
@@ -995,9 +982,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.Foreground = RedBrush;
                     Paragraph para = new Paragraph(redRun);
                     para.LineHeight = 10;
-                    
                     richTextBox1.Document.Blocks.Add(para);
-                    richTextBox1.ScrollToEnd();
                     flag1 = 1;
                 }
                 if (i % 2 == 0 && qa[i].Length <= 9)
@@ -1007,7 +992,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.FontSize = 18;
                     redRun.Foreground = RedBrush;
                     richTextBox1.Document.Blocks.Add(new Paragraph(redRun));
-                    richTextBox1.ScrollToEnd();
                 }
                 if (i % 2 == 1 && qa[i].Length > 9)
                 {
@@ -1016,7 +1000,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.FontSize = 18;
                     redRun.Foreground = greenBrush;
                     richTextBox1.Document.Blocks.Add(new Paragraph(redRun));
-                    richTextBox1.ScrollToEnd();
                     if (flag1 == 1)
                     {
                         flag1 = 0;
@@ -1029,7 +1012,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     redRun.FontSize = 18;
                     redRun.Foreground = greenBrush;
                     richTextBox1.Document.Blocks.Add(new Paragraph(redRun));
-                    richTextBox1.ScrollToEnd();
                     if (flag1 == 1)
                     {
                         flag1 = 0;
@@ -1173,27 +1155,22 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             canvas1.Children.Add(volumebar);
             //    canvas1.Children.Add(speakingratebar);
 
-//現場DEMO須調整的
-            //adjust the face capturing square position
             for (int i = 0; i < vertices.Count; i++)
             {
                 CameraSpacePoint vert = vertices[i];
                 DepthSpacePoint point = sensor.CoordinateMapper.MapCameraPointToDepthSpace(vert);
                 if (float.IsInfinity(vert.X) || float.IsInfinity(vert.Y)) return;
-                
-                //adjust the x position of face capturing square position
-                Canvas.SetLeft(rec, point.X / 1.5); //123456789  1.5   2.5
-                //adjust the y position of face capturing square position
-                Canvas.SetTop(rec, point.Y / 5.0);
+                Canvas.SetLeft(rec, point.X / 1.5); //123456789
+                Canvas.SetTop(rec, point.Y / 6.0);
             }
             canvas2.Children.Add(rec);
 
             if (buttonclick == 1)
             {
                 summary = interview_state + " " + smile + " " + nod + " " + eye + " " + volume + " " + sitepal;
-                
-
-                
+                //summary = mundOffen17.ToString();
+                //outfile1.WriteLine(summary);
+                //outfile1.Flush();
             }
 
             //increase index of array
@@ -1312,11 +1289,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            
-            buttonclick = 1;
-        }
+       
 
         /// <summary>
         /// Handles the color frame data arriving from the sensor
@@ -1403,17 +1376,11 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         }
 
         Thread oThread = null;
-        Thread Camerathread = null;
+        //Thread Camerathread = null;
         //System.Windows.Forms.Timer timer1;
-
-
-
-
-        //video recorder
-       
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            
+           
             //開啟面試對話函式
             oThread = new Thread(new ThreadStart(work));
             //  Camerathread = new Thread(new ThreadStart(Camera));
@@ -1428,38 +1395,27 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private void work()
         {
 
+            
+           
+
             //start record video
             screenVideoRecorder videoRecorder = new screenVideoRecorder();
             videoRecorder.startScreenVideoRecording();
 
             //clear the speech_t0_text.txt at the beginning of the interview
             System.IO.File.WriteAllText(@"speech_to_text.txt", string.Empty);
-            //capture smile value per second
-            // Create a timer with a two second interval.
-            nonverbal_Timer = new System.Timers.Timer(1000);
 
-            nonverbal_Timer.Elapsed += OnTimedEvent;
-           
+
             //start record user's nonverbal feature
             nonverbal_Timer.Start();
 
 
 
 
-           
 
-
-
-            //set the timer that go off every 1 sec to capture 9-facial AUs
-            facialAU_Timer = new System.Timers.Timer(1000);
-
-            facialAU_Timer.Elapsed += GetSmileAUOnTimeEvent;
-
-            //start record user's facial AUs
-            facialAU_Timer.Start();
-
-
-
+            /* Process videocmd = new Process();
+             videocmd.StartInfo.FileName = "ColorBasics-WPF.exe";
+             videocmd.Start();*/
             buttonclick = 1;
             double[] mouthopentime = new double[3];
             String[,] question = new String[6, 6];
@@ -1468,28 +1424,39 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //int speaktime = 0;
             string nextquestion = "你好,";
             Random qnumber = new Random();
-            
+            //int ran = 0;
             //記錄所有qa，並在UpdateMesh()去讀取，然後再印在對話框
             StreamWriter qa = new StreamWriter("allQA.txt");
-           
+            //StreamWriter qa = new StreamWriter("E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speech_to_text.txt");
+
+
+            /*  StreamReader ques = new StreamReader("/question/1.txt", System.Text.Encoding.Default);
+              question[0,0] = ques.ReadLine();
+              ques.Close();*/
+
+            /*  question[0,0] = "請自我介紹";
+              question[1,0] = "為什麼你要報考這個科系";
+              question[2,0] = "你在大學最拿手的科目是什麼";
+              question[3,0] = "你未來的期望是什麼";
+              question[4,0] = "你常做什麼運動";*/
             question[5, 0] = "面試到此結束";
             nextquestion = message3("start");
-           
+            //set up speech to text .txt 's reader
+            //System.IO.StreamReader speech2textReader = new System.IO.StreamReader("speech_to_text.txt");
 
-
-            //use cmd to call record program
             Process cmd1 = new Process();
             Process cmd2 = new Process();
+            string text = "";
+            string ckip;
             for (int i = 0; i < 12; i++)
             {
-                /*
                 FileStream fs = new FileStream("name.txt", FileMode.Create);
                 StreamWriter sw = new StreamWriter(fs);
                 sw.Write(i);
                 sw.Flush();
                 sw.Close();
                 fs.Close();
-                */
+
                 if (i < 10)
                 {
                     //nextquestion 
@@ -1504,32 +1471,32 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
                     // message1();
                     sitepal = "面試結束";
                     //speaktime = question[i].Length*300
-                    Thread.Sleep(nextquestion.Split(';')[0].Length * 350);
+                    Thread.Sleep(nextquestion.Split(';')[0].Length * 300);
                     sitepal = null;
-                   
+                    /*  Process videoclose = new Process();
+                      videoclose.StartInfo.FileName = "cmd.exe";
+                      videoclose.StartInfo.Arguments = "/k taskkill /f /im ColorBasics-WPF.exe";
+                      videoclose.Start();*/
                     break;
                 }
                 
-                //show Start Record Img to prompt user it's time to answer the question(use dispatcher to enable cross thread UI update)
-                Dispatcher.BeginInvoke(new Action(showStartRecordImg),DispatcherPriority.Normal);
-                
 
+               
                 //call record program
-                
+                //show Start Record Img to prompt user it's time to answer the question(use dispatcher to enable cross thread UI update)
+                Dispatcher.BeginInvoke(new Action(showStartRecordImg), DispatcherPriority.Normal);
+
                 cmd1.StartInfo.FileName = "python";
                 cmd1.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/record.py ";
-                
                 cmd1.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 cmd1.StartInfo.CreateNoWindow = true;
-                cmd1.Start(); 
+                cmd1.Start();
                 cmd1.WaitForExit();
-
+                //call asr
                 //hide Start Record Img to prompt user recording has come to an end(use dispatcher to enable cross thread UI update)
                 Dispatcher.BeginInvoke(new Action(hideStartRecordImg), DispatcherPriority.Normal);
-                
-
                 //speech to text and store text in speech_to_text.txt
-               
+
                 cmd2.StartInfo.FileName = "python";
                 cmd2.StartInfo.Arguments = "E:/temp/HDFaceBasics-WPF/KinectHDFaceTracking/bin/x64/Debug/speechtotext.py demo.wav";
                 cmd2.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -1543,20 +1510,26 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
                 // 取得資料夾內所有檔案
 
-                string text = "";
-                
+               
+              
 
 
-                
+                System.Threading.Thread.Sleep(2800);
 
-                //wait until the file is released by writting process
-                Thread.Sleep(2800);
-                   
-                
+
+                //text = speech2textReader.ReadLine();
+                ///////////////////////////////////////////////////////////////////
+                //StreamReader reader = new StreamReader("speech_to_text.txt");
                 text = File.ReadAllLines("speech_to_text.txt")[0];
 
-                
-                string ckip = text;
+
+                Console.Read();
+
+
+                //若錄音城市不成功就用下方此方式輸入你要說的回答句
+                //string text = "你;好;你好\n";
+                //text = "你;好;你好\n";
+                ckip = text;
 
                 line += "System:" + nextquestion.Split(';')[1].Replace("\n", "") + "\n" + "User:" + ckip.Replace("\n", "") + "\n";
                 answer += nextquestion.Split(';')[2].Replace("\n", "").Replace("\r", "") + "#" + nextquestion.Split(';')[1].Replace("\n", "").Replace("\r", "") + "#" + ckip.Replace("\n", "").Replace("\r", "") + "\n";
@@ -1572,8 +1545,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             }
             qa.Write(answer);
             qa.Close();
-            //outfile1.Close();
-            //stop nonverbal timer and facialAU timer because the interview has come to an end
 
             //stop recording video
             videoRecorder.stopScreenVideoRecording();
@@ -1581,42 +1552,21 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             // stop the nonverbal timer
             nonverbal_Timer.Stop();
             //outfile2.Close();
-            // stop the facialAU timer
-            facialAU_Timer.Stop();
+
             //write facial9AUArray to file
-            store9AU_2_file(facial9AUArray);
+            string fileStorePath = "E:/temp/SVM/SVM/smileTest.txt";
+            smileForSVM.store9AU_2_file(facial9AU.facial9AUArray, fileStorePath);
             //outfile3.Close();
-            //System.Threading.Thread.Sleep(1800);
 
             //begin send nonverbal feature to AWS back end :"54.191.185.244", 8084
-            sendNonverbalRecord();
+            nonverbalRecord.sendNonverbalRecord(nonverbalRecordOBJ);
             //end send nonverbal feature to back end 
 
-            //Console.WriteLine("jsonResult Converter test" + jsonResult);
 
             //send smileTest.txt file to AWS back end::"54.191.185.244", 8084
-            sendSmileTestFile();
-            /*
-            int waitFileTimes = 0;
-            while (true)
-            {
-                waitFileTimes++;
-                if (WaitForFile("E:/temp/SVM/SVM/smileTest.txt"))
-                {
-                    sendSmileTestFile();
-                    break;
-                }
+            smileForSVM.sendSmileTestFile(fileStorePath);
 
-                if(waitFileTimes>10)
-                {
-                    break;
-                }
-            }
-            */
-            //outfile2 = new StreamWriter("Smile_Intensity_LipDep_Only.txt");
-            //outfile3 = new StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
         }
-
         //show recording img 
         public void showStartRecordImg()
         {
@@ -1628,162 +1578,11 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         {
             recordImage.Visibility = Visibility.Collapsed;
         }
-
-        //store 9AU to file 
-        public void store9AU_2_file(string[] myArray)
-        {
-            //store to data
-            System.IO.StreamWriter streamWriter = new System.IO.StreamWriter("E:/temp/SVM/SVM/smileTest.txt");
-            string output = "";
-            int notNullAmount = myArray.Count(s => s != null);
-            for (int i = 0; i < notNullAmount; i++)
-            {
-
-                output += myArray[i].ToString();
-                streamWriter.WriteLine(output);
-                output = "";
-            }
-            streamWriter.Close();
-        }
-        public static bool IsFileReady(String sFilename)
-        {
-            // If the file can be opened for exclusive access it means that the file
-            // is no longer locked by another process.
-            try
-            {
-                using (FileStream inputStream = File.Open(sFilename, FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    if (inputStream.Length > 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public bool WaitForFile(string fullPath)
-        {
-            int numTries = 0;
-            while (true)
-            {
-                ++numTries;
-                try
-                {
-                    // Attempt to open the file exclusively.
-                    using (FileStream fs = new FileStream(fullPath,
-                        FileMode.Open, FileAccess.ReadWrite,
-                        FileShare.None, 100))
-                    {
-                        fs.ReadByte();
-
-                        // If we got this far the file is ready
-                        break;
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                    Console.WriteLine(
-                       "WaitForFile {0} failed to get an exclusive lock: {1}",
-                        fullPath, ex.ToString());
-                    
-                    if (numTries > 10)
-                    {
-                        Console.WriteLine(
-                            "WaitForFile {0} giving up after 10 tries",
-                            fullPath);
-                        return false;
-                    }
-
-                    // Wait for the lock to be released
-                    System.Threading.Thread.Sleep(100);
-                }
-            }
-
-            Console.WriteLine("WaitForFile {0} returning true after {1} tries",
-                fullPath, numTries);
-            return true;
-        }
-
-        //send nonverbalRecord in the form of json to backend(array->json)
-        public void sendNonverbalRecord()
-        {
-
-            //Turn it into json
-            JSonHelper helper0 = new JSonHelper();
-            string jsonResult = helper0.ConvertObjectToJSon(nonverbalRecordOBJ);
-            //Console.WriteLine("jsonResult Converter test" + jsonResult);
-
-            //tcp to send json to back end
-            TcpClient tcpclnt = new TcpClient();
-
-            tcpclnt.Connect("54.191.185.244", 8084); // use the ipaddress as in the server program
-
-            Stream stm = tcpclnt.GetStream();
-
-            //encode UTF8
-            Byte[] nonverbal_data = Encoding.UTF8.GetBytes(jsonResult);
-
         
 
-            stm.Write(nonverbal_data, 0, nonverbal_data.Length);
-
-            tcpclnt.Close();
-
-
-         }
-        
-        //open the SmileTestFile and send the content to backend
-        public void sendSmileTestFile()
-        {
-            
-            string lineInFile;
-            string facialAUPackage = "";
-
-            System.IO.StreamReader file = new System.IO.StreamReader("E:/temp/SVM/SVM/smileTest.txt");
-            while ((lineInFile = file.ReadLine()) != null)
-            {
-                //Console.WriteLine(line);
-                facialAUPackage += lineInFile + "\n";
-            }
-
-            file.Close();
-
-            
-            
-            //tcp to send json to back end
-            TcpClient tcpclnt = new TcpClient();
-
-            tcpclnt.Connect("54.191.185.244", 8087); // use the ipaddress as in the server program
-
-            Stream stm = tcpclnt.GetStream();
-
-            //encode UTF8
-            Byte[] facialAU_data = Encoding.UTF8.GetBytes(facialAUPackage);
-
-            //encode ASCII
-
-
-            stm.Write(facialAU_data, 0, facialAU_data.Length);
-
-            tcpclnt.Close();
 
 
 
-        }
-
-
-
-       
         private string message3(string answer)
         {
             string returnData = "";
@@ -1791,6 +1590,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             //UdpClient udpClient = new UdpClient("140.116.82.104", 8082);
 
             //run back end Q generation program on AWS cloud server
+
             UdpClient udpClient = new UdpClient("54.201.204.180", 8082);
 
             //
@@ -1814,7 +1614,12 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
                 returnData = Encoding.UTF8.GetString(receiveBytes);
 
-               
+                /* Console.WriteLine("This is the message you received " +
+                                             returnData.ToString());
+                 Console.WriteLine("This message was sent from " +
+                                             RemoteIpEndPoint.Address.ToString() +
+                                             " on their port number " +
+                                             RemoteIpEndPoint.Port.ToString());*/
             }
             catch (Exception e)
             {
@@ -1824,7 +1629,6 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             return returnData;
         }
 
-        
         static string seg(String answer)
         {
             string[] strDic = new StreamReader("GigaWord_Dic.txt", Encoding.Default).ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1880,7 +1684,23 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
             a.Show();
             //return;
         }
-        
+        /*
+        private void close_Click(object sender, RoutedEventArgs e)
+        {
+            if(right.Content.ToString() == "close all")
+            {
+                mainwindow.Width = 850;
+                right.Content = "open all";
+            }
+            else if(right.Content.ToString() == "open all")
+            {
+                face.Visibility = Visibility.Visible;
+                canvas2.Visibility = Visibility.Visible;
+                canvas1.Visibility = Visibility.Visible;
+                mainwindow.Width = 1275;
+                right.Content = "close all";
+            }
+        }*/
 
     }
 }

@@ -25,8 +25,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         //set up a timer to get 9 facial AUs per 0.5 sec
         private static System.Timers.Timer Video_Timer;
 
-        //video save to this dir
-        string videoSavePath = "C:/Users/Ben/Videos";
+       
         //store the filename of the most recent recorded video
         string mostRecentVideo;
         //cross thread 
@@ -34,6 +33,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         int newPosition = 0;
         int oldPosition = 0;
 
+        //create screen recorder obj
+        screenVideoRecorder videoRecorder = new screenVideoRecorder();
 
 
         public Form1()
@@ -42,8 +43,8 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
             
             //read in the latest recorded video
-            screenVideoRecorder videoRecorder = new screenVideoRecorder();
-            mostRecentVideo=videoRecorder.getMostRecentVideo(videoSavePath);
+           
+            mostRecentVideo=videoRecorder.getMostRecentVideo();
 
 
             //cross thread
@@ -53,7 +54,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
            
                
 
-            //rele();
+            rele();
             //show nonverbal chart 
             nonverbal_webBrowser.Navigate("http://54.191.185.244/linechart.html");//
                                                                                   ///////////////
@@ -83,6 +84,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
 
             //pictureBox1.Left += 6;
             newPosition = Convert.ToInt32(axWindowsMediaPlayer1.Ctlcontrols.currentPosition);
+            newPosition = newPosition - 3;
             pictureBox1.Left += ProgressBarStep * (newPosition-oldPosition);
             oldPosition = newPosition;
             //Console.WriteLine(Convert.ToInt32(730.0 / Convert.ToDouble(axWindowsMediaPlayer1.Ctlcontrols.currentItem.duration.ToString())));
@@ -182,7 +184,7 @@ namespace Microsoft.Samples.Kinect.HDFaceBasics
         private void axWindowsMediaPlayer1_ClickEvent(object sender, AxWMPLib._WMPOCXEvents_ClickEvent e)
         {
 
-            axWindowsMediaPlayer1.URL = videoSavePath + "/" + mostRecentVideo;
+            axWindowsMediaPlayer1.URL = videoRecorder.getVideoSavePath() + "/" + mostRecentVideo;
             //axWindowsMediaPlayer1.URL = "C:/Users/Ben/Videos/ice_video_20170105-212048.webm";
             axWindowsMediaPlayer1.Ctlcontrols.play(); // activates the play button
                                                       //axWindowsMediaPlayer1.Ctlcontrols.stop(); // activates the stop button
